@@ -2,28 +2,38 @@ const {
     FuseBox,
     ReplacePlugin,
     WebIndexPlugin,
+    QuantumPlugin,
+    EnvPlugin,
     CSSPlugin,
     SassPlugin,
     CSSModules
 } = require('fuse-box')
 const { src, task, context } = require('fuse-box/sparky')
+const { spawn } = require('child_process')
+const path = require('path')
+const express = require('express')
+
 const CONFIG = require('./config')
 
 context(
     class {
-        getConfig () {
+        getRendererConfig () {
             return FuseBox.init({
                 useTypescriptCompiler: true,
-                homeDir: CONFIG.HOME_DIR,
+                homeDir: CONFIG.RENDERER_DIR,
                 target: CONFIG.COMPILE_TARGET,
-                output: CONFIG.OUTPUT_PATTERN,
+                output: CONFIG.OUTPUT_PATTERN_RENDERER,
                 hash: this.__PROD__,
                 sourceMaps: {
                     project: !this.__PROD__,
                     vendor: false
                 },
                 plugins: [
-                    WebIndexPlugin(),
+                    WebIndexPlugin({
+                        title: "FuseBox electron demo",
+                        template: "src/renderer/index.html",
+                        path: this.__PROD__ ? "." : "/renderer/"
+                    }),
                     [
                         SassPlugin(),
                         CSSPlugin()
@@ -38,7 +48,7 @@ context(
                         outFile: CONFIG.CSS_OUT
                     }),
                     this.__PROD__ && QuantumPlugin({
-                        bakeApiIntoBundle: 'app',
+                        bakeApiIntoBundle: 'renderer',
                         uglify: true,
                         css : true
                     }),
@@ -49,15 +59,45 @@ context(
             })
         }
 
-        produceBundle (fuse) {
-            const app = fuse.bundle('app')
+        getMainConfig () {
+            return FuseBox.init({
+                homeDir: CONFIG.MAIN_DIR,
+                output: CONFIG.OUTPUT_PATTERN_MAIN,
+                target: 'server',
+                experimentalFeatures: true,
+                cache: !this.__PROD__,
+                plugins: [
+                    EnvPlugin({ NODE_ENV: this.__PROD__ ? 'production' : 'development'}),
+                    this.__PROD__ && QuantumPlugin({
+                        bakeApiIntoBundle: 'main',
+                        target: 'server',
+                        treeshake: true,
+                        removeExportsInterop: false,
+                        uglify: true
+                    })
+                ]
+            })
+        }
+
+        produceRendererBundle (fuse) {
+            const app = fuse.bundle('renderer')
+
+            if (!this.__PROD__) {
+                app.hmr()
+                app.watch()
+            }
+            app.instructions('> [index.tsx] + fuse-box-css')
+
+            return app
+        }
+
+        produceMainBundle (fuse) {
+            const app = fuse.bundle('main')
 
             if (!this.__PROD__) {
                 app.watch()
-                app.hmr()
-            } else {
             }
-            app.instructions(' > index.tsx')
+            app.instructions('> [main.ts]')
 
             return app
         }
@@ -65,41 +105,92 @@ context(
 )
 
 const tasks = {
-    clean: () =>
+    'clean:dist': () =>
         src('dist')
             .clean('dist')
             .exec(),
+        
+    'clean:cache': () =>
+        src('dist')
+            .clean('.fusebox')
+            .exec(),
 
-    default: async context => {
+    'dev:main': async context => {
         context.__PROD__ = false
-        const fuse = context.getConfig()
+        const fuse = context.getMainConfig()
 
-        fuse.dev()
-        context.produceBundle(fuse)
+        context.produceMainBundle(fuse)
+
+        await fuse.run()
+            .then(() => {
+                const child = spawn('npm', ['run', 'start:electron:watch'], { shell: true })
+                child.stdout.on('data', function(data) {
+                    console.log(data.toString());
+                    //Here is where the output goes
+                });
+                child.stderr.on('data', function(data) {
+                    console.error(data.toString());
+                    //Here is where the error output goes
+                });
+            })
+    },
+
+    'build:main': async context => {
+        context.__PROD__ = true
+        const fuse = context.getMainConfig()
+
+        context.produceMainBundle(fuse)
 
         await fuse.run()
     },
 
-    // test: async context => {
-    //     context.__PROD__ = false
-    //     const fuse = context.getConfig()
+    'dev:renderer': async context => {
+        context.__PROD__ = false
+        const fuse = context.getRendererConfig()
 
-    //     fuse.dev()
-    //     context.testBundle(fuse)
+        fuse.dev({ root: false }, server => {
+            const dist = path.join(__dirname, CONFIG.DIST_DIR)
+            const app = server.httpServer.app
 
-    //     await fuse.run
-    // },
+            app.use('/renderer/', express.static(path.join(dist, 'renderer')))
+            app.get("*", (req, res) => res.sendFile(path.join(dist, 'renderer/index.html')))
+        })
+        context.produceRendererBundle(fuse)
 
-    dist: async context => {
+        await fuse.run()
+    },
+
+    'build:renderer': async context => {
         context.__PROD__ = true
-        const fuse = context.getConfig()
+        const fuse = context.getRendererConfig()
 
-        fuse.dev()
-        context.produceBundle(fuse)
+        context.produceRendererBundle(fuse)
+
+        await fuse.run()
     }
 }
 
-task('clean', tasks.clean)
-task('default', ['clean'], tasks.default)
-task('dist', ['clean'], tasks.dist)
-// task('test', ['clean'], tasks.test)
+task('clean:dist', tasks['clean:dist'])
+task('clean:cache', tasks['clean:cache'])
+
+task('dev:renderer', tasks['dev:renderer'])
+task('dev:main', tasks['dev:main'])
+
+task('build:renderer', tasks['build:renderer'])
+task('build:main', tasks['build:main'])
+
+// Development build
+task('default', [
+    'clean:dist',
+    'clean:cache',
+    'dev:renderer',
+    'dev:main'
+])
+
+// Production build
+task('dist', [
+    'clean:dist',
+    'clean:cache',
+    'build:renderer',
+    'build:main'
+])

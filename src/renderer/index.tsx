@@ -5,4 +5,4 @@ const App: React.StatelessComponent<any> = () => (
     <span>Hello World!</span>
 )
 
-ReactDOM.render(<App/>, document.querySelector('body'))
+ReactDOM.render(<App/>, document.querySelector('#root'))
