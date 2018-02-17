@@ -16,10 +16,12 @@
     "react-redux": "^5.0.7"
   },
   "devDependencies": {
-    "@types/jasmine": "^2.8.6",
     "electron": "^1.8.2",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
+    "jest": "^22.3.0",
+    "jest-enzyme": "^4.2.0",
+    "ts-jest": "^22.0.4",
     "tslint": "^5.9.1",
     "tslint-eslint-rules": "^5.0.0",
     "tslint-react": "^3.5.1",
