@@ -1,0 +1,18 @@
+{
+  "name": "electron-translating-app",
+  "version": "1.0.0",
+  "description": "App for collaborative book translations",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "translation",
+    "git",
+    "markdown",
+    "epub",
+    "collaborative"
+  ],
+  "author": "H4PPY_0773R",
+  "license": "MIT"
+}
