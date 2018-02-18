@@ -1,6 +1,6 @@
 import { app, BrowserWindow } from 'electron'
-import path from 'path'
-import url from 'url'
+import * as path from 'path'
+import * as url from 'url'
 
 const env: string = process.env.NODE_ENV || 'production'
 const __DEV__: boolean = env === 'development'
@@ -12,7 +12,7 @@ function createWindow (): void {
 
     if (__DEV__) {
         mainWindow.loadURL('http://localhost:4444')
-        mainWindow.webContents.openDevTools();
+        mainWindow.webContents.openDevTools()
     } else {
         mainWindow.loadURL(url.format({
             pathname: path.join(app.getAppPath(), 'dist', 'renderer', 'index.html'),
