@@ -1,0 +1,18 @@
+{
+  "configurations": [
+    {
+      "name": "Debug Main Process",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+
+      // This is the important stuff
+      "program": "${workspaceRoot}/src/main/main.ts",
+      "outFiles": [
+        "${workspaceRoot}/dist/main/main.js"
+      ],
+      "sourceMaps": true
+    }
+  ]
+}

@@ -52,9 +52,6 @@ context(
                         uglify: true,
                         css : true
                     }),
-                    ReplacePlugin({
-                        'fuse.process.env': this.__PROD__ ? 'production' : 'develop'
-                    })
                 ]
             })
         }
@@ -66,6 +63,12 @@ context(
                 target: 'server',
                 experimentalFeatures: true,
                 cache: !this.__PROD__,
+                sourceMaps: {
+                    project: !this.__PROD__,
+                    inline: false,
+                    sourceRoot: __dirname,
+                    vendor: false,
+                },
                 plugins: [
                     EnvPlugin({ NODE_ENV: this.__PROD__ ? 'production' : 'development'}),
                     this.__PROD__ && QuantumPlugin({
