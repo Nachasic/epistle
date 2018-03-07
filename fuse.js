@@ -125,17 +125,17 @@ const tasks = {
         context.produceMainBundle(fuse)
 
         await fuse.run()
-            .then(() => {
-                const child = spawn('npm', ['run', 'start:electron:watch'], { shell: true })
-                child.stdout.on('data', function(data) {
-                    console.log(data.toString());
-                    //Here is where the output goes
-                });
-                child.stderr.on('data', function(data) {
-                    console.error(data.toString());
-                    //Here is where the error output goes
-                });
-            })
+        .then(() => {
+            const child = spawn('npm', ['run', 'electron'], { shell: true })
+            child.stdout.on('data', function(data) {
+                console.log(data.toString());
+                //Here is where the output goes
+            });
+            child.stderr.on('data', function(data) {
+                console.error(data.toString());
+                //Here is where the error output goes
+            });
+        })
     },
 
     'build:main': async context => {

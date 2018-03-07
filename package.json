@@ -11,8 +11,8 @@
     "build": "node fuse.js dist",
     "test": "jest --coverage",
     "test-watch": "jest --watch",
-    "start:electron": "electron .",
-    "start:electron:watch": "nodemon --watch 'dist/main/*.*' --exec npm run start:electron"
+    "electron": "electron .",
+    "watch-electron": "nodemon --watch 'dist/main/*.*' --exec npm run electron"
   },
   "dependencies": {
     "@types/react": "^16.0.38",
@@ -21,6 +21,7 @@
     "es2015-i18n-tag": "^1.3.1",
     "fuse-box": "^3.1.3",
     "history": "^4.7.2",
+    "material-ui": "^1.0.0-beta.34",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-redux": "^5.0.7"
@@ -32,6 +33,7 @@
     "express": "^4.16.2",
     "jest": "^22.3.0",
     "jest-enzyme": "^4.2.0",
+    "node-sass": "^4.7.2",
     "ts-jest": "^22.0.4",
     "tslint": "^5.9.1",
     "tslint-eslint-rules": "^5.0.0",
