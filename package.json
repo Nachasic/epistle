@@ -12,11 +12,16 @@
     "test": "jest --coverage",
     "test-watch": "jest --watch",
     "electron": "electron .",
-    "watch-electron": "nodemon --watch 'dist/main/*.*' --exec npm run electron"
+    "watch-electron": "nodemon --watch 'dist/main/*.*' --exec npm run electron",
+    "storybook": "start-storybook -p 6006 -c .storybook",
+    "build-storybook": "build-storybook -c .storybook"
   },
   "dependencies": {
+    "@storybook/react": "^3.3.15",
     "@types/react": "^16.0.38",
     "@types/react-dom": "^16.0.4",
+    "@types/storybook__react": "^3.0.7",
+    "awesome-typescript-loader": "^5.0.0-0",
     "electron": "^1.8.2",
     "es2015-i18n-tag": "^1.3.1",
     "fuse-box": "^3.1.3",
@@ -27,7 +32,13 @@
     "react-redux": "^5.0.7"
   },
   "devDependencies": {
+    "@storybook/addon-actions": "^3.3.15",
+    "@storybook/addon-links": "^3.3.15",
+    "@storybook/addons": "^3.3.15",
+    "@storybook/react": "^3.3.15",
     "@types/jest": "^22.1.3",
+    "babel-core": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "express": "^4.16.2",
@@ -35,6 +46,7 @@
     "jest-enzyme": "^4.2.0",
     "node-sass": "^4.7.2",
     "ts-jest": "^22.0.4",
+    "ts-loader": "3.5.0",
     "tslint": "^5.9.1",
     "tslint-eslint-rules": "^5.0.0",
     "tslint-react": "^3.5.1",
