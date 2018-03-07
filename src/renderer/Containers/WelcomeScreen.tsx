@@ -3,7 +3,8 @@ import Scopes from '../i18n/Scopes'
 import { i18nGroup } from 'es2015-i18n-tag'
 
 import Grid from 'material-ui/Grid'
-import Button from 'material-ui/Button';
+import Button from 'material-ui/Button'
+import HelloWorld from '../Components/HelloWorld'
 
 @i18nGroup(Scopes.WELCOME_SCREEN)
 export default class WelcomeScreen extends React.PureComponent<any, any> {
@@ -13,7 +14,8 @@ export default class WelcomeScreen extends React.PureComponent<any, any> {
         return (
             <Grid container>
                 <Grid item xs={6}>
-                    <Button color="primary">{this.i18n`Create new project`}</Button>
+                    <Button color="primary">{this.i18n`I am a localized button!`}</Button>
+                    <HelloWorld name="Nachasic" />
                 </Grid>
             </Grid>
         )

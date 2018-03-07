@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import i18n, { i18nConfig, i18nGroup } from 'es2015-i18n-tag'
+import i18n, { i18nConfig } from 'es2015-i18n-tag'
 
 import translations, { locale } from './i18n/Transations/ru-RU'
 
@@ -16,7 +16,7 @@ i18nConfig({
 class App extends React.PureComponent<any, any> {
     render () {
         return (
-            <div lang="ru-RU">
+            <div>
                 <WelcomeScreen />
             </div>
         )
