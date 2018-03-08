@@ -13,13 +13,28 @@ export interface ILineProps {
     line: Epistle.IEpistleLine
 }
 
-export default class Line extends React.PureComponent<ILineProps, {}> {
+interface ILineState {
+    queue: Epistle.TLineExecutionQueue | null,
+    queueProgress: number
+}
+
+export default class Line extends React.PureComponent<ILineProps, ILineState> {
     public props: ILineProps
 
     constructor (props: ILineProps) {
         super(props)
+        this.state = {
+            queue: props.line ? Line.ParseLine(props.line.line) : null,
+            queueProgress: 0
+        }
     }
 
+    /**
+     * Converts a series of line atoms into execution queue.
+     * 
+     * @param atoms ILineAtom[]
+     * @returns TLineExecutionQueue 
+     */
     public static ParseLine (atoms: Epistle.ILineAtom[]): Epistle.TLineExecutionQueue {
         const breakWord = (word: string, mode: Epistle.TLineAtomArticulation = 'PAIR'): string[] => {
             switch (mode) {
@@ -70,7 +85,27 @@ export default class Line extends React.PureComponent<ILineProps, {}> {
         }, [])
     }
 
+    componentWillReceiveProps (nextProps) {
+        if (nextProps.line) {
+            this.setState({
+                queue: Line.ParseLine(nextProps.line.line),
+                queueProgress: 0
+            })
+        }
+    }
+
     render () {
-        return <p>Hey pal</p>
+        const progress = this.state.queueProgress
+        const timeout = this.state.queue[progress].timeout
+        const lineLength = this.state.queue.length
+        const update = () => this.setState({
+            queue: this.state.queue,
+            queueProgress: progress + 1
+        })
+        if (progress < lineLength - 1) {
+            setTimeout(update, timeout)
+        }
+
+        return <p>Hey pal, {progress}</p>
     }
 }
