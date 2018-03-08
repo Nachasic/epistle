@@ -1,12 +1,16 @@
 declare namespace Epistle {
     export type TDeliveryType = 'ACCENTED' | 'NORMAL' | 'AGRESSIVE'
+    export type TLineAtomType = 'WORD' | 'PAUSE' | 'INSERTION'
+    export type TLineAtomPace = 'X-SLOW' | 'SLOW' | 'NORMAL' | 'FAST' | 'X-FAST'
+    export type TLineAtomArticulation = 'WORD' | 'PAIR' | 'LETTER'
+    export type TLineAtomEffect = 'NONE' | 'BOUNCE' | 'STOMP'
 
     export interface ILineAtom {
-        type: 'WORD' | 'PAUSE' | 'INSERTION',
+        type: TLineAtomType,
         value: string,
-        pace?: 'X-SLOW' | 'SLOW' | 'NORMAL' | 'FAST' | 'X-FAST'
-        articulation?: 'WORD' | 'SYLLABLE' | 'LETTER',
-        effect?: 'NONE' | 'BOUNCE' | 'STOMP'
+        pace?: TLineAtomPace,
+        articulation?: TLineAtomArticulation,
+        effect?: TLineAtomEffect
     }
 
     export interface ILineInsertion {
@@ -20,4 +24,13 @@ declare namespace Epistle {
         insertions?: ILineInsertion[],
         delivery?: TDeliveryType[]
     }
+
+    export interface ILineExecutionOperation {
+        key: string,
+        timeout: number,
+        effect: TLineAtomEffect,
+        body: string
+    }
+    
+    export type TLineExecutionQueue = ILineExecutionOperation[]
 }
