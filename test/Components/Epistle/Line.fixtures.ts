@@ -59,5 +59,5 @@ export const basicLineParsed = [
         timeout: 250,
         effect: 'NONE',
         body: ' '
-    }),
+    })
 ]
