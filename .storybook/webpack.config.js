@@ -12,15 +12,31 @@ module.exports = (storybookBaseConfig, configType) => {
     test: /\.(ts|tsx|js|jsx)$/,
     loader: 'ts-loader',
     include: path.resolve(__dirname, '../stories'),
-    // loader: require.resolve('ts-loader')
   });
 
   storybookBaseConfig.module.rules.push({
     test: /\.(ts|tsx|js|jsx)$/,
     loader: 'ts-loader',
     include: path.resolve(__dirname, '../src/renderer'),
-    // loader: require.resolve('ts-loader')
   });
+
+  storybookBaseConfig.module.rules.push({
+    test: /\.css$/,
+    loaders: [
+      require.resolve('style-loader'),
+      {
+        loader: require.resolve('css-loader'),
+        options: {
+          importLoaders: 1,
+          modules: true,
+          localIdentName: '[name]__[local]___[hash:base64:5]',
+        },
+      },
+      require.resolve('sass-loader')
+    ],
+  },)
+
+
   storybookBaseConfig.resolve.extensions.push('.ts', '.tsx', 'js', 'jsx');
 
   // Return the altered config

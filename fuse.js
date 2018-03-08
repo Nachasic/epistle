@@ -39,8 +39,9 @@ context(
                         CSSPlugin()
                     ],
                     [
-                        SassPlugin(),
-                        CSSModules(),
+                        CSSModules({
+                            useDefault: false
+                        }),
                         CSSPlugin()
                     ],
                     CSSPlugin({
@@ -52,7 +53,8 @@ context(
                         uglify: true,
                         css : true
                     }),
-                ]
+                ],
+                useTypescriptCompiler: true
             })
         }
 

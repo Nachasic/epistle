@@ -1,0 +1,18 @@
+:local(.effect-NONE) {
+    display: inline-block;
+    opacity: 0
+}
+
+:local(.effect-BOUNCE) {
+    display: inline-block;
+    opacity: 0
+}
+
+:local(.effect-STOMP) {
+    display: inline-block;
+    opacity: 0
+}
+
+:local(.VISIBLE) {
+    opacity: 1
+}

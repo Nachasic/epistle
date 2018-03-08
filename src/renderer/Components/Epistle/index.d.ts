@@ -34,3 +34,5 @@ declare namespace Epistle {
     
     export type TLineExecutionQueue = ILineExecutionOperation[]
 }
+
+declare module '*.css'

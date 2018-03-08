@@ -1,5 +1,6 @@
 import * as React from 'react'
 import * as shortid from 'shortid'
+import * as styles from './Styles/Line.css'
 
 const paceMappings = new Map<Epistle.TLineAtomPace, number> ([
     ['X-SLOW', 1000],
@@ -94,6 +95,22 @@ export default class Line extends React.PureComponent<ILineProps, ILineState> {
         }
     }
 
+    renderQueue () {
+        const queue: Epistle.TLineExecutionQueue = this.state.queue
+        const progress: number = this.state.queueProgress
+
+        return queue.map((operation: Epistle.ILineExecutionOperation, index: number) =>
+            <span
+                className={index <= progress
+                    ? styles[`effect-${operation.effect}`] + styles.VISIBLE
+                    : styles[`effect-${operation.effect}`]}
+                key={operation.key}
+            >
+                {operation.body}
+            </span>
+        )
+    }
+
     render () {
         const progress = this.state.queueProgress
         const timeout = this.state.queue[progress].timeout
@@ -106,6 +123,6 @@ export default class Line extends React.PureComponent<ILineProps, ILineState> {
             setTimeout(update, timeout)
         }
 
-        return <p>Hey pal, {progress}</p>
+        return <p>{this.renderQueue()}</p>
     }
 }
