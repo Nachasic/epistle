@@ -54,7 +54,7 @@ export default class Line extends React.PureComponent<ILineProps, ILineState> {
             let bodies: Epistle.TLineExecutionQueue = []
             const spaceOperation: Epistle.ILineExecutionOperation = {
                 key: shortid.generate() as string,
-                timeout: 250,
+                timeout: paceMappings.get(atom.pace),
                 effect: 'NONE',
                 body: ' '
             }
@@ -76,13 +76,13 @@ export default class Line extends React.PureComponent<ILineProps, ILineState> {
             }
             // TODO: Implement insertions
             // if (atom.type === 'PAUSE') {
-            const operations: Epistle.ILineExecutionOperation = {
+            const pause: Epistle.ILineExecutionOperation = {
                 key: shortid.generate() as string,
                 timeout: paceMappings.get('X-SLOW'),
                 effect: 'NONE',
                 body: ''
             }
-            return [operations]
+            return [...accumulator, pause]
         }, [])
     }
 

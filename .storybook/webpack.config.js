@@ -21,7 +21,7 @@ module.exports = (storybookBaseConfig, configType) => {
   });
 
   storybookBaseConfig.module.rules.push({
-    test: /\.css$/,
+    test: /\.(css|scss)$/,
     loaders: [
       require.resolve('style-loader'),
       {
