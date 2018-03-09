@@ -3,13 +3,15 @@ const CONFIG = require('./config')
 module.exports = {
     cacheDirectory: CONFIG.CACHE_DIR,
     collectCoverage: false,
+    testEnvironment: "jest-env-jsdom-silent",
     collectCoverageFrom: [
         CONFIG.FILE_PATTERN,
         "!**/node_modules/**"
     ],
     coverageDirectory: CONFIG.COVERAGE_DIR,
     coverageReporters: ["lcov"],
-    "setupTestFrameworkScriptFile": "./node_modules/jest-enzyme/lib/index.js",
+    // setupTestFrameworkScriptFile: "./node_modules/jest-enzyme/lib/index.js",
+    setupTestFrameworkScriptFile: "<rootDir>/testSetup.js",
     testMatch: [
         CONFIG.TEST_PATTERN,
     ],

@@ -2,7 +2,7 @@ import * as React from 'react'
 import * as shortid from 'shortid'
 import * as styles from './Styles/Line.css'
 
-const paceMappings = new Map<Epistle.TLineAtomPace, number> ([
+export const paceMappings = new Map<Epistle.TLineAtomPace, number> ([
     ['X-SLOW', 1000],
     ['SLOW', 500],
     ['NORMAL', 250],
@@ -38,6 +38,10 @@ export default class Line extends React.PureComponent<ILineProps, ILineState> {
      */
     public static ParseLine (atoms: Epistle.ILineAtom[]): Epistle.TLineExecutionQueue {
         const breakWord = (word: string, mode: Epistle.TLineAtomArticulation = 'PAIR'): string[] => {
+            if (word.length === 1) {
+                return [word]
+            }
+
             switch (mode) {
             case 'WORD':
                 return [word]
@@ -50,7 +54,7 @@ export default class Line extends React.PureComponent<ILineProps, ILineState> {
             }
         }
 
-        return atoms.reduce((accumulator, atom) => {
+        return atoms.reduce((accumulator: Epistle.TLineExecutionQueue, atom: Epistle.ILineAtom, index: number) => {
             let bodies: Epistle.TLineExecutionQueue = []
             const spaceOperation: Epistle.ILineExecutionOperation = {
                 key: shortid.generate() as string,
@@ -72,7 +76,11 @@ export default class Line extends React.PureComponent<ILineProps, ILineState> {
                         return operation
                     })
 
-                return [...accumulator, ...bodies, spaceOperation]
+                if (index !== atoms.length - 1) {
+                    bodies.push(spaceOperation)
+                }
+
+                return [...accumulator, ...bodies]
             }
             // TODO: Implement insertions
             // if (atom.type === 'PAUSE') {

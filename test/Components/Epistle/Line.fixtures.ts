@@ -32,7 +32,7 @@ export const basicLineParsed = [
     }),
     (hashId: string): Epistle.ILineExecutionOperation => ({
         key: hashId,
-        timeout: 250,
+        timeout: 500,
         effect: 'NONE',
         body: ' '
     }),
@@ -53,11 +53,44 @@ export const basicLineParsed = [
         timeout: 500,
         effect: 'NONE',
         body: 'd!'
-    }),
-    (hashId: string): Epistle.ILineExecutionOperation => ({
-        key: hashId,
-        timeout: 250,
-        effect: 'NONE',
-        body: ' '
     })
 ]
+
+export const slowPhrase: Epistle.IEpistleLine = {
+    lineId: 'slowPhrase',
+    line: [
+        {
+            type: 'WORD',
+            value: 'I',
+            pace: 'X-SLOW'
+        },
+        {
+            type: 'WORD',
+            value: 'GOT',
+            articulation: 'LETTER',
+            pace: 'SLOW'
+        },
+        {
+            type: 'WORD',
+            value: 'a',
+            pace: 'NORMAL'
+        },
+        {
+            type: 'WORD',
+            value: 'big',
+            articulation: 'LETTER',
+            pace: 'FAST'
+        },
+        {
+            type: 'PAUSE',
+            value: '',
+            pace: 'SLOW'
+        },
+        {
+            type: 'WORD',
+            value: 'crab',
+            articulation: 'WORD',
+            pace: 'SLOW'
+        }
+    ]
+}
