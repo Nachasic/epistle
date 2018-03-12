@@ -65,9 +65,9 @@ storiesOf('Epistle line editor components', module)
             />,
             'Line atom',
             <p>
-            A sigle atom of the Epistle line, usually represents a single word or a pause.<br/>
-            On click it should just report that it's clicked.<br/>
-            On double click it should allow user to edit the body.<br/>
+                A sigle atom of the Epistle line, usually represents a single word or a pause.<br/>
+                On click it should just report that it's clicked.<br/>
+                On double click it should allow user to edit the body.<br/>
             </p>
         )
     }))

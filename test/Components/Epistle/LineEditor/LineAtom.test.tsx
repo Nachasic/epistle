@@ -1,9 +1,10 @@
 import * as React from 'react'
-import { shallow } from 'enzyme'
+import { shallow, mount } from 'enzyme'
 
 import LineAtom, { ILineEditorAtomProps, ILineEditorAtomState } from '../../../../src/renderer/Components/Epistle/LineEditor/LineAtom'
 
-import Chip from 'material-ui/Chip'
+// import Chip from 'material-ui/Chip'
+import ButtonBase from 'material-ui/ButtonBase'
 import TextField from 'material-ui/TextField'
 
 describe('Line Atom editor tests', () => {
@@ -89,7 +90,8 @@ describe('Line Atom editor tests', () => {
         let wrapper
 
         beforeEach(() => {
-            wrapper = shallow(<LineAtom {...props} />)
+            wrapper = mount(<LineAtom {...props} />)
+            jest.useFakeTimers()
         })
 
         it('should render in Viewing mode when provided with an atom', () => {
@@ -98,15 +100,15 @@ describe('Line Atom editor tests', () => {
             expect(mode).toEqual('VIEW')
         })
 
-        it('should render a chip with text in viewing mode', () => {
-            const chip = wrapper.find(Chip)
+        it('should render a button with text in viewing mode', () => {
+            const chip = wrapper.find(ButtonBase)
 
             expect(chip.length).toEqual(1)
-            expect(chip.props().label).toEqual(props.atom.value)
+            expect(chip.text()).toEqual(props.atom.value)
         })
 
         it('should enter editing mode when double-clicked', () => {
-            const chip = wrapper.find(Chip)
+            const chip = wrapper.find(ButtonBase)
 
             chip.simulate('doubleclick')
             expect(wrapper.state().mode).toEqual('EDIT')
@@ -118,9 +120,10 @@ describe('Line Atom editor tests', () => {
         })
 
         it('should report it\'s atom when clicked', () => {
-            const chip = wrapper.find(Chip)
+            const chip = wrapper.find(ButtonBase)
 
             chip.simulate('click')
+            jest.runAllTimers() // We're debouncing clicks
             expect(clickCallback).toHaveBeenLastCalledWith(props.atom)
         })
     })

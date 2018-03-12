@@ -3,7 +3,8 @@ import * as React from 'react'
 import { debounce } from '../../../Utils'
 
 import TextField from 'material-ui/TextField'
-import Chip from 'material-ui/Chip'
+// import Chip from 'material-ui/Chip'
+import ButtonBase from 'material-ui/ButtonBase'
 import Modal from 'material-ui/Modal'
 
 const DOUBLE_CLICK_DEBOUNCE_TIME: number = 250
@@ -53,16 +54,16 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
             }
         }, DOUBLE_CLICK_DEBOUNCE_TIME)
         return (
-            <Chip
+            <ButtonBase
                 onDoubleClick={handleDoubleClick}
                 onClick={handleClick}
-                label={atom.value}
-            />
+            >
+                {atom.value}
+            </ButtonBase>
         )
     }
 
     renderIntput () {
-        let input: HTMLInputElement
         const atom: Epistle.ILineAtom = this.props.atom ? this.props.atom : defaultAtom
 
         const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -81,8 +82,7 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
             return this.props.onDelete()
         }
         const inputProperties = {
-            onBlur: handleUnfocus,
-            ref: field => { input = field }
+            onBlur: handleUnfocus
         }
 
         return (
