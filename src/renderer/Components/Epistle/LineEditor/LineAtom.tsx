@@ -6,6 +6,8 @@ import TextField from 'material-ui/TextField'
 import Chip from 'material-ui/Chip'
 import Modal from 'material-ui/Modal'
 
+const DOUBLE_CLICK_DEBOUNCE_TIME: number = 250
+
 export interface ILineEditorAtomProps {
     id: string,
     atom?: Epistle.ILineAtom,
@@ -49,7 +51,7 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
             if (!doubleClicked) {
                 this.props.onClick(atom)
             }
-        }, 250)
+        }, DOUBLE_CLICK_DEBOUNCE_TIME)
         return (
             <Chip
                 onDoubleClick={handleDoubleClick}
@@ -85,9 +87,7 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
 
         return (
             <TextField
-                multiline
                 autoFocus
-                rowsMax="4"
                 value={atom.value}
                 onChange={handleChange}
                 margin="normal"
