@@ -1,13 +1,14 @@
 import * as React from 'react'
 import { storiesOf } from '@storybook/react'
+import { action } from '@storybook/addon-actions'
+import { withState } from '@dump247/storybook-state'
 
 import Grid from 'material-ui/Grid'
 import Paper from 'material-ui/Paper'
 import Typography from 'material-ui/Typography'
-import '../src/renderer/Stylesheets/fonts.scss'
+import '../../../src/renderer/Stylesheets/fonts.scss'
 
-import Line from '../src/renderer/Components/Epistle/Line'
-import * as Fixtures from './Fixtures/Line.fixtures'
+import LineAtom, { ILineEditorAtomProps as IAtomProps} from '../../../src/renderer/Components/Epistle/LineEditor/LineAtom'
 
 const styles = {
     root: {
@@ -43,20 +44,27 @@ const beautifulWrapping = (element, header, annotation) =>
         </Grid>
     </div>
 
-storiesOf('Epistle line rendering component', module)
-    .add('Hello World', () => beautifulWrapping(
-        <Line line={Fixtures.testLine} />,
-        'Basic case',
-        `
-            An example of basic usage with no effects and simple direction.
-        `
-    ))
-
-    .add('Pace direction and pauses', () => beautifulWrapping(
-        <Line line={Fixtures.surprisedLine} />,
-        'Pacing direction and pauses',
-        `
-            Epistle dialogue format allows for control of pacing
-            for the delivery of each line.
-        `
-    ))
+storiesOf('Epistle line editor components', module)
+    .add('Line atom', withState<any>({
+        atom: {
+            type: 'WORD',
+            value: 'helloworld'
+        }
+    }, (store) => {
+        const changeCallback = (atom: Epistle.ILineAtom) => {
+            store.set({ atom })
+            action('atom-changed')
+        }
+        return beautifulWrapping(
+            <LineAtom
+                {...store.state}
+                onChange={changeCallback}
+                onClick={action('clicked')}
+                onDelete={action('atom-deleted')}
+                id="testline1"
+            />,
+            'Line atom',
+            `
+            `
+        )
+    }))

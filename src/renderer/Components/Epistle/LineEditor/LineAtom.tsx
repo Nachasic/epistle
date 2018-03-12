@@ -1,5 +1,7 @@
 import * as React from 'react'
 
+import { debounce } from '../../../Utils'
+
 import TextField from 'material-ui/TextField'
 import Chip from 'material-ui/Chip'
 import Modal from 'material-ui/Modal'
@@ -8,6 +10,7 @@ export interface ILineEditorAtomProps {
     id: string,
     atom?: Epistle.ILineAtom,
     onChange: (atom: Epistle.ILineAtom) => any,
+    onClick: (atom: Epistle.ILineAtom) => any,
     onDelete: Function
 }
 
@@ -35,14 +38,18 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
         this.setState({ mode: 'EDIT' })
     }
 
-    renderDirectionsEditor (isOpen: boolean, onClose: Function) {
-        return null
-    }
-
     renderChip () {
+        let doubleClicked: boolean = false
         const atom: Epistle.ILineAtom = this.props.atom ? this.props.atom : defaultAtom
-        const handleDoubleClick = () => null // Show direction editor
-        const handleClick = () => this.setState({ mode: 'EDIT' })
+        const handleDoubleClick = () => {
+            doubleClicked = true
+            this.setState({ mode: 'EDIT' })
+        }
+        const handleClick = debounce(() => {
+            if (!doubleClicked) {
+                this.props.onClick(atom)
+            }
+        }, 250)
         return (
             <Chip
                 onDoubleClick={handleDoubleClick}
@@ -64,8 +71,8 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
                 value
             })
         }
-        const handleUnfocus = () => {
-            if (input && input.value) {
+        const handleUnfocus = (event: React.FormEvent<HTMLInputElement>) => {
+            if (event.currentTarget && event.currentTarget.value) {
                 return this.setState({ mode: 'VIEW' })
             }
 

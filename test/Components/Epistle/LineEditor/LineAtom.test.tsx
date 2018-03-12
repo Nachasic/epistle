@@ -14,9 +14,12 @@ describe('Line Atom editor tests', () => {
     describe('Editing mode', () => {
         const changeCallback: Function = jest.fn()
         const deleteCallback: Function = jest.fn()
+        const clickCallback: Function = jest.fn()
+
         const props: ILineEditorAtomProps = {
             id: 'basicID',
             onChange: (atom: Epistle.ILineAtom) => changeCallback(atom),
+            onClick: (atom: Epistle.ILineAtom) => clickCallback(atom),
             onDelete: deleteCallback
         }
         let wrapper
@@ -46,6 +49,7 @@ describe('Line Atom editor tests', () => {
                     value: 'Hello'
                 },
                 onChange: (atom: Epistle.ILineAtom) => changeCallback(atom),
+                onClick: (atom: Epistle.ILineAtom) => clickCallback(atom),
                 onDelete: deleteCallback
             }
             const newWrapper = wrapper.setProps(newProps)
@@ -70,9 +74,12 @@ describe('Line Atom editor tests', () => {
     describe('Viewing mode', () => {
         const changeCallback: Function = jest.fn()
         const deleteCallback: Function = jest.fn()
+        const clickCallback: Function = jest.fn()
+
         const props: ILineEditorAtomProps = {
             id: 'basicID',
             onChange: (atom: Epistle.ILineAtom) => changeCallback(atom),
+            onClick: (atom: Epistle.ILineAtom) => clickCallback(atom),
             onDelete: deleteCallback,
             atom: {
                 type: 'WORD',
@@ -98,16 +105,23 @@ describe('Line Atom editor tests', () => {
             expect(chip.props().label).toEqual(props.atom.value)
         })
 
-        it('should enter editing mode when clicked', () => {
+        it('should enter editing mode when double-clicked', () => {
             const chip = wrapper.find(Chip)
 
-            chip.simulate('click')
+            chip.simulate('doubleclick')
             expect(wrapper.state().mode).toEqual('EDIT')
         })
 
         it('should enter editing mode when asked to', () => {
             wrapper.instance().Edit()
             expect(wrapper.state().mode).toEqual('EDIT')
+        })
+
+        it('should report it\'s atom when clicked', () => {
+            const chip = wrapper.find(Chip)
+
+            chip.simulate('click')
+            expect(clickCallback).toHaveBeenLastCalledWith(props.atom)
         })
     })
 })
