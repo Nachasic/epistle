@@ -89,16 +89,16 @@ storiesOf('Epistle line editor components', module)
         }
     }, (store) => {
         const clickCallback = (id: string) => {
-            action(`clicked ${id}`)
             store.set({
                 selected: !store.state.selected
             })
+            return action(store.state.selected ? 'selected' : 'deselected')(id)
         }
         const changeCallback = (atom: Epistle.ILineAtom) => {
-            action('atom-changed')
             store.set({ atom })
+            return action('atom-changed')(atom)
         }
-        const spaceCallback = (tail: string) => action(`Thrown tail "${tail}"`)
+        const spaceCallback = (tail: string) => action('Thrown tail')(tail)
 
         return beautifulWrapping(
             <LineAtom

@@ -24,7 +24,13 @@ When atom is in **editing mode** user can modify the word via the input field.
 - Current word appears as input's current value;
 - User can type non-space characters and see the value changing.
 
-### 4. Exiting viewing mode
+### 4. Deleting atom
+When atom is in **editing mode** user can delete the atom by emptying it's value and then unfocusing the input field.
+
+- Input field is empty and unfocused;
+- Delete callback is invoked.
+
+### 5. Exiting viewing mode
 When atom is in **editing mode** user can perform following actions to return back to the **viewing mode**:
 
 - Unfocus the input field;
