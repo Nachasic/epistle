@@ -6,6 +6,12 @@ import { shallow } from 'enzyme'
 import Line, { paceMappings } from '../../../src/renderer/Components/Epistle/Line'
 import * as Fixtures from './Line.fixtures'
 
+export const calculatePhraseBody = (phrase: Epistle.IEpistleLine): string =>
+phrase.line
+    .filter((atom: Epistle.ILineAtom) => atom.type === 'WORD')
+    .map((atom: Epistle.ILineAtom, index: number) => atom.value)
+    .join(' ')
+
 describe('<Line> component tests', () => {
     it('should be okay', () => {
         expect(Line).toBeDefined()
@@ -41,11 +47,6 @@ describe('<Line> component tests', () => {
                 return accumulator + operation.timeout
             }, 0)
         }
-        const calculatePhraseBody = (phrase: Epistle.IEpistleLine): string =>
-            phrase.line
-                .filter((atom: Epistle.ILineAtom) => atom.type === 'WORD')
-                .map((atom: Epistle.ILineAtom, index: number) => atom.value)
-                .join(' ')
 
         const testPhrase: Epistle.IEpistleLine = Fixtures.slowPhrase
         let wrapper

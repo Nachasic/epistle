@@ -33,3 +33,21 @@ When atom is in **editing mode** user can perform following actions to return ba
 
 If the atom had been selected before **editing mode** it should remain selected.
 `
+
+export const atomSequence = `
+# Definitions and disambiguations
+
+# User scenarios
+### 1. Viewing the line
+
+### 2. Appending atoms
+
+### 3. Editing atoms
+
+### 4. Deleting atoms
+
+### 5. Injecting atoms
+
+### 6. Selecting/deselecting atoms
+
+`
