@@ -16,11 +16,13 @@ describe('Line Atom editor tests', () => {
         const changeCallback: Function = jest.fn()
         const deleteCallback: Function = jest.fn()
         const clickCallback: Function = jest.fn()
+        const spaceCallback: Function = jest.fn()
 
         const props: ILineEditorAtomProps = {
             id: 'basicID',
             onChange: (atom: Epistle.ILineAtom) => changeCallback(atom),
-            onClick: (atom: Epistle.ILineAtom) => clickCallback(atom),
+            onClick: (id: string) => clickCallback(id),
+            onSpace: (tail: string) => spaceCallback(tail),
             onDelete: deleteCallback
         }
         let wrapper
@@ -50,7 +52,8 @@ describe('Line Atom editor tests', () => {
                     value: 'Hello'
                 },
                 onChange: (atom: Epistle.ILineAtom) => changeCallback(atom),
-                onClick: (atom: Epistle.ILineAtom) => clickCallback(atom),
+                onClick: (id: string) => clickCallback(id),
+                onSpace: (tail: string) => spaceCallback(tail),
                 onDelete: deleteCallback
             }
             const newWrapper = wrapper.setProps(newProps)
@@ -61,7 +64,7 @@ describe('Line Atom editor tests', () => {
 
         it('should fire onChange calback once value is changed', () => {
             const input = wrapper.find(TextField)
-            const NEW_VALUE = 'Some updated value'
+            const NEW_VALUE = 'Some_updated_value'
             const expectedAtom: Epistle.ILineAtom = {
                 type: 'WORD',
                 value: NEW_VALUE
@@ -70,17 +73,34 @@ describe('Line Atom editor tests', () => {
             input.simulate('change', { target: { value: NEW_VALUE } })
             expect(changeCallback).toHaveBeenCalledWith(expectedAtom)
         })
+
+        it('should exit editing mode and fire a callback once space is pressed', () => {
+            const input = wrapper.find(TextField)
+            const NEW_VALUE: string[] = ['Some', 'value']
+            const expectedAtom: Epistle.ILineAtom = {
+                type: 'WORD',
+                value: NEW_VALUE[0]
+            }
+            const expectedTail = NEW_VALUE[1]
+
+            input.simulate('change', { target: { value: NEW_VALUE.join(' ') } })
+            expect(changeCallback).toHaveBeenCalledWith(expectedAtom)
+            expect(spaceCallback).toHaveBeenCalledWith(expectedTail)
+            expect(wrapper.state().mode).toEqual('VIEW')
+        })
     })
 
     describe('Viewing mode', () => {
         const changeCallback: Function = jest.fn()
         const deleteCallback: Function = jest.fn()
         const clickCallback: Function = jest.fn()
+        const spaceCallback: Function = jest.fn()
 
         const props: ILineEditorAtomProps = {
             id: 'basicID',
             onChange: (atom: Epistle.ILineAtom) => changeCallback(atom),
-            onClick: (atom: Epistle.ILineAtom) => clickCallback(atom),
+            onClick: (id: string) => clickCallback(id),
+            onSpace: (tail: string) => spaceCallback(tail),
             onDelete: deleteCallback,
             atom: {
                 type: 'WORD',
@@ -124,7 +144,7 @@ describe('Line Atom editor tests', () => {
 
             chip.simulate('click')
             jest.runAllTimers() // We're debouncing clicks
-            expect(clickCallback).toHaveBeenLastCalledWith(props.atom)
+            expect(clickCallback).toHaveBeenLastCalledWith(props.id)
         })
     })
 })

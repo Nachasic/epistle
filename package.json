@@ -51,6 +51,7 @@
     "jest": "^22.3.0",
     "jest-env-jsdom-silent": "^1.0.0",
     "jest-enzyme": "^4.2.0",
+    "markdown-to-jsx": "^6.5.1",
     "node-sass": "^4.7.2",
     "sass-loader": "^6.0.7",
     "ts-jest": "^22.0.4",

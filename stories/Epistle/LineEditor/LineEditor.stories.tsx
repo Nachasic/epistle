@@ -6,7 +6,10 @@ import { withState } from '@dump247/storybook-state'
 import Grid from 'material-ui/Grid'
 import Paper from 'material-ui/Paper'
 import Typography from 'material-ui/Typography'
+import Markdown from 'markdown-to-jsx'
 import '../../../src/renderer/Stylesheets/fonts.scss'
+
+import * as Descriptions from './LineEditor.descriptions'
 
 import LineAtom, { ILineEditorAtomProps as IAtomProps} from '../../../src/renderer/Components/Epistle/LineEditor/LineAtom'
 
@@ -24,6 +27,39 @@ const styles = {
         backgroundColor: '#eee',
         fontSize: '1.5em',
         fontFamily: 'monospace'
+    }
+}
+
+const mdOptions = {
+    overrides: {
+        h1: {
+            component: Typography,
+            props: {
+                variant: 'headline',
+                gutterBottom: true
+            }
+        },
+        h2: {
+            component: Typography,
+            props: {
+                variant: 'title',
+                gutterBottom: true
+            }
+        },
+        h3: {
+            component: Typography,
+            props: {
+                variant: 'subheading',
+                gutterBottom: true
+            }
+        },
+        h4: {
+            component: Typography,
+            props: {
+                variant: 'caption',
+                gutterBottom: true
+            }
+        }
     }
 }
 
@@ -46,28 +82,37 @@ const beautifulWrapping = (element, header, annotation) =>
 
 storiesOf('Epistle line editor components', module)
     .add('Line atom', withState<any>({
+        selected: false,
         atom: {
             type: 'WORD',
             value: 'helloworld'
         }
     }, (store) => {
-        const changeCallback = (atom: Epistle.ILineAtom) => {
-            store.set({ atom })
-            action('atom-changed')
+        const clickCallback = (id: string) => {
+            action(`clicked ${id}`)
+            store.set({
+                selected: !store.state.selected
+            })
         }
+        const changeCallback = (atom: Epistle.ILineAtom) => {
+            action('atom-changed')
+            store.set({ atom })
+        }
+        const spaceCallback = (tail: string) => action(`Thrown tail "${tail}"`)
+
         return beautifulWrapping(
             <LineAtom
                 {...store.state}
                 onChange={changeCallback}
-                onClick={action('clicked')}
+                onClick={clickCallback}
+                onSpace={spaceCallback}
                 onDelete={action('atom-deleted')}
                 id="testline1"
             />,
             'Line atom',
-            <p>
-                A sigle atom of the Epistle line, usually represents a single word or a pause.<br/>
-                On click it should just report that it's clicked.<br/>
-                On double click it should allow user to edit the body.<br/>
-            </p>
+            <Markdown
+                options={mdOptions}
+                children={Descriptions.singleAtom}
+            />
         )
     }))
