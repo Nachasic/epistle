@@ -10,3 +10,12 @@
 :local(.selected) {
     background-color: yellow !important
 }
+
+:local(.input) {
+    position: relative;
+    top: .4rem;
+}
+
+:local(.inputField) {
+    width: 5rem !important;
+}

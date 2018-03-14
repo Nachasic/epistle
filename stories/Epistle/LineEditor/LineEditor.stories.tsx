@@ -10,8 +10,10 @@ import Markdown from 'markdown-to-jsx'
 import '../../../src/renderer/Stylesheets/fonts.scss'
 
 import * as Descriptions from './LineEditor.descriptions'
+import * as Fixtures from './LineEditor.fixtures'
 
 import LineAtom, { ILineEditorAtomProps as IAtomProps} from '../../../src/renderer/Components/Epistle/LineEditor/LineAtom'
+import AtomSequence, { IAtomSequenceProps } from '../../../src/renderer/Components/Epistle/LineEditor/AtomSequence'
 
 const styles = {
     root: {
@@ -36,6 +38,7 @@ const mdOptions = {
             component: Typography,
             props: {
                 variant: 'headline',
+                component: 'span',
                 gutterBottom: true
             }
         },
@@ -43,6 +46,7 @@ const mdOptions = {
             component: Typography,
             props: {
                 variant: 'title',
+                component: 'span',
                 gutterBottom: true
             }
         },
@@ -50,6 +54,7 @@ const mdOptions = {
             component: Typography,
             props: {
                 variant: 'subheading',
+                component: 'span',
                 gutterBottom: true
             }
         },
@@ -57,6 +62,7 @@ const mdOptions = {
             component: Typography,
             props: {
                 variant: 'caption',
+                component: 'span',
                 gutterBottom: true
             }
         }
@@ -69,7 +75,7 @@ const beautifulWrapping = (element, header, annotation) =>
             <Grid item xs={12}>
                 <Paper style={styles.paper}>
                     <Typography variant="display1" gutterBottom>{header}</Typography>
-                    <Typography gutterBottom noWrap>
+                    <Typography component="div" gutterBottom noWrap>
                         {annotation}
                     </Typography>
                     <div style={styles.demo}>
@@ -113,6 +119,21 @@ storiesOf('Epistle line editor components', module)
             <Markdown
                 options={mdOptions}
                 children={Descriptions.singleAtom}
+            />
+        )
+    }))
+
+    .add('Line atom sequence', withState<any>({
+        line: Fixtures.sampleLine1
+    }, (store) => {
+        return beautifulWrapping(
+            <AtomSequence
+                {...store.state}
+            />,
+            'Atom sequence',
+            <Markdown
+                options={mdOptions}
+                children={Descriptions.atomSequence}
             />
         )
     }))

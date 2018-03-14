@@ -17,6 +17,8 @@ export interface ILineEditorAtomProps {
     onChange: (atom: Epistle.ILineAtom) => any,
     onClick: (id: string) => any,
     onSpace: (tail: string) => any,
+    onEnterEdit?: () => any,
+    onEnterView?: () => any,
     onDelete: Function
 }
 
@@ -42,6 +44,10 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
 
     public Edit (): void {
         this.setState({ mode: 'EDIT' })
+    }
+
+    public View (): void {
+        this.setState({ mode: 'VIEW' })
     }
 
     renderChip () {
@@ -92,15 +98,17 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
             return this.props.onDelete()
         }
         const inputProperties = {
-            onBlur: handleUnfocus
+            onBlur: handleUnfocus,
+            className: styles.inputField
         }
 
         return (
             <TextField
+                className={styles.input}
                 autoFocus
                 value={atom.value}
                 onChange={handleChange}
-                margin="normal"
+                margin="dense"
                 inputProps={inputProperties}
             />
         )
@@ -109,8 +117,14 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
     render () {
         switch (this.state.mode) {
         case 'VIEW':
+            if (this.props.onEnterView) {
+                this.props.onEnterView()
+            }
             return this.renderChip()
         default:
+            if (this.props.onEnterEdit) {
+                this.props.onEnterEdit()
+            }
             return this.renderIntput()
         }
 

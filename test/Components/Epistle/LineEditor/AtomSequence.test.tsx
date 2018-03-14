@@ -6,6 +6,7 @@ import * as LineFixtures from '../Line.fixtures'
 import { calculatePhraseBody } from '../Line.test'
 
 import LineAtom from '../../../../src/renderer/Components/Epistle/LineEditor/LineAtom'
+import IconButton from 'material-ui/IconButton'
 
 describe('Line editor atom sequence tests', () => {
     it('should be OK', () => {
@@ -36,11 +37,17 @@ describe('Line editor atom sequence tests', () => {
             expect(atoms.length).toEqual(props.line.line.length)
         })
 
-        it('each rendered atom should render a word in a phrase', () => {
+        it('present a whole phrase via atoms', () => {
             const atoms = wrapper.find(LineAtom)
             const gotPhrase = atoms.map(item => item.props().atom.value).join(' ')
 
             expect(gotPhrase).toEqual(lineBody)
+        })
+
+        it('should render "add new atom" button at the end', () => {
+            const addAtomBtn = wrapper.find(IconButton)
+
+            expect(addAtomBtn.length).toEqual(1)
         })
     })
 })

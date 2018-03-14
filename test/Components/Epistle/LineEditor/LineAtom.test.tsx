@@ -88,6 +88,11 @@ describe('Line Atom editor tests', () => {
             expect(spaceCallback).toHaveBeenCalledWith(expectedTail)
             expect(wrapper.state().mode).toEqual('VIEW')
         })
+
+        it('should enter viewing mode when asked to', () => {
+            wrapper.instance().View()
+            expect(wrapper.state().mode).toEqual('VIEW')
+        })
     })
 
     describe('Viewing mode', () => {
