@@ -153,6 +153,10 @@ export default class AtomSequence extends React.PureComponent<IAtomSequenceProps
         return index === 0
     }
 
+    private getLastAtomExchange (): IAtomExchange {
+        return this.state.parsedAtoms[this.state.parsedAtoms.length - 1]
+    }
+
     private renderAtoms () {
         const onChange = (id: string, atom: Epistle.ILineAtom) => this.updateLineByAtom(id, atom) // update line
         const onClick = (id: string) => this.updateAtomSelection(id) // update atom selection
@@ -197,15 +201,16 @@ export default class AtomSequence extends React.PureComponent<IAtomSequenceProps
     componentDidUpdate () {
         const indexToEdit: number = this.state.scheduledAtomUpdateIndex
         const atomExchangeList: IAtomExchange[] = this.state.parsedAtoms
+        const state: IAtomSequenceState = { ...this.state }
 
         if (indexToEdit !== null) {
-            this.setState({
-                scheduledAtomUpdateIndex: null,
-                editingAtomId: atomExchangeList[indexToEdit]
-                    ? atomExchangeList[indexToEdit].id
-                    : atomExchangeList[atomExchangeList.length - 1].id
-            })
+            state.scheduledAtomUpdateIndex = null
+            state.editingAtomId = atomExchangeList[indexToEdit]
+                ? atomExchangeList[indexToEdit].id
+                : atomExchangeList[atomExchangeList.length - 1].id
         }
+
+        this.setState(state)
     }
 
     componentWillReceiveProps (nextProps: IAtomSequenceProps): void {
@@ -221,7 +226,14 @@ export default class AtomSequence extends React.PureComponent<IAtomSequenceProps
     }
 
     render () {
-        const appendAtom = () => null
+        const appendAtom = () => {
+            const lastAtomExchange: IAtomExchange = this.getLastAtomExchange()
+            const newAtom: Epistle.ILineAtom = {
+                type: 'WORD',
+                value: ''
+            }
+            this.insertAtomAfterAtomId(newAtom, lastAtomExchange.id, lastAtomExchange.atom)
+        }
 
         return (
             <div>
