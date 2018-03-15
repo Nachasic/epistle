@@ -130,10 +130,12 @@ storiesOf('Epistle line editor components', module)
             store.set({ line })
             return action('line-changed')(line)
         }
+        const onSelect = (atoms: Epistle.ILineAtom[]) => action('selected-atoms-report')(atoms)
         return beautifulWrapping(
             <AtomSequence
                 {...store.state}
                 onLineChange={onChange}
+                onAtomSelect={onSelect}
             />,
             'Atom sequence',
             <Markdown

@@ -23,7 +23,7 @@ describe('Line editor atom sequence tests', () => {
                 line: LineFixtures.basicLine
             },
             onLineChange: (line: Epistle.IEpistleLine) => changeCallback(line),
-            onAtomSelect: (data: IAtomExchange[]) => atomSelectCallback(data)
+            onAtomSelect: (data: Epistle.ILineAtom[]) => atomSelectCallback(data)
         }
         const lineBody: string = calculatePhraseBody(props.line)
 

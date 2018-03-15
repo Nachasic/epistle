@@ -10,7 +10,8 @@ import * as styles from '../Styles/AtomSequence.css'
 export interface IAtomSequenceProps {
     line: Epistle.IEpistleLine,
     onLineChange: (line: Epistle.IEpistleLine) => any,
-    onAtomSelect: (selectedAtoms: IAtomExchange[]) => any
+    onAtomSelect: (selectedAtoms: Epistle.ILineAtom[]) => any,
+    // reportSelectedAtoms?: (selectedAtoms: Epistle.ILineAtom[]) => any
 }
 
 // Dedicated interface for exchangind atom data between line editor components
@@ -116,20 +117,39 @@ export default class AtomSequence extends React.PureComponent<IAtomSequenceProps
             return !isDeleted
         })
 
+        if (!newParsedAtoms.length) {
+            return
+        }
+
         this.setState({
             parsedAtoms: newParsedAtoms,
             scheduledAtomUpdateIndex: deletedIndex - 1
         })
         this.updateLineByAtomExchangeList(newParsedAtoms)
+        this.reportSelectedAtoms(this.state.selectedAtomIds)
+    }
+
+    private reportSelectedAtoms (ids: string[]): void {
+        if (this.props.onAtomSelect) {
+            const atoms: Epistle.ILineAtom[] = this.state.parsedAtoms.reduce((accumulator: Epistle.ILineAtom[], value: IAtomExchange): Epistle.ILineAtom[] => {
+                if (ids.indexOf(value.id) >= 0 && value.atom.value) {
+                    return [...accumulator, value.atom]
+                }
+                return accumulator
+            }, [])
+
+            this.props.onAtomSelect(atoms)
+        }
     }
 
     private updateAtomSelection (id: string): void {
-        this.setState((prevState: Readonly<IAtomSequenceState>, props: IAtomSequenceProps): IAtomSequenceState => {
+        this.setState((prevState: Readonly<IAtomSequenceState>, props: Readonly<IAtomSequenceProps>): IAtomSequenceState => {
             const currentIds = prevState.selectedAtomIds
             const selectedAtomIds: string[] = currentIds.indexOf(id) >= 0
                 ? currentIds.filter(gotId => gotId !== id)
                 : [...currentIds, id]
 
+            this.reportSelectedAtoms(selectedAtomIds)
             return {
                 ...prevState,
                 selectedAtomIds
@@ -167,11 +187,7 @@ export default class AtomSequence extends React.PureComponent<IAtomSequenceProps
             }
             this.insertAtomAfterAtomId(newAtom, id, atom)
         }
-        const onDelete = (id: string) => {
-            if (!this.isAtomFirstInLine(id)) {
-                this.deleteAtom(id) // delete current atom and focus on a previous one
-            }
-        }
+        const onDelete = (id: string) => this.deleteAtom(id) // delete current atom and focus on a previous one
         const onEnterEdit = (id: string) => this.setEditing(id)
         const onBlur = (id: string) => {
             if (this.state.editingAtomId === id) {
