@@ -104,6 +104,25 @@ export default class AtomSequence extends React.PureComponent<IAtomSequenceProps
         this.updateLineByAtomExchangeList(newParsedAtoms)
     }
 
+    private deleteAtom (id: string): void {
+        let deletedIndex: number
+        const newParsedAtoms: IAtomExchange[] = this.state.parsedAtoms.filter((value: IAtomExchange, index: number): boolean => {
+            const isDeleted: boolean = value.id === id
+
+            if (isDeleted) {
+                deletedIndex = index
+            }
+
+            return !isDeleted
+        })
+
+        this.setState({
+            parsedAtoms: newParsedAtoms,
+            scheduledAtomUpdateIndex: deletedIndex - 1
+        })
+        this.updateLineByAtomExchangeList(newParsedAtoms)
+    }
+
     private updateAtomSelection (id: string): void {
         this.setState((prevState: Readonly<IAtomSequenceState>, props: IAtomSequenceProps): IAtomSequenceState => {
             const currentIds = prevState.selectedAtomIds
@@ -128,24 +147,33 @@ export default class AtomSequence extends React.PureComponent<IAtomSequenceProps
         this.setState({ editingAtomId: '' })
     }
 
+    private isAtomFirstInLine (id: string): boolean {
+        const index: number = this.state.parsedAtoms.findIndex((value: IAtomExchange) => value.id === id)
+
+        return index === 0
+    }
+
     private renderAtoms () {
         const onChange = (id: string, atom: Epistle.ILineAtom) => this.updateLineByAtom(id, atom) // update line
         const onClick = (id: string) => this.updateAtomSelection(id) // update atom selection
-        const onSpace = (atom: Epistle.ILineAtom, id: string, tail: string) => {
+        const onSpace = (atom: Epistle.ILineAtom, id: string, tail: string) => { // insert new atom after this one
             const newAtom: Epistle.ILineAtom = {
                 type: 'WORD',
                 value: tail
             }
             this.insertAtomAfterAtomId(newAtom, id, atom)
-        } // insert new atom after current one
-        const onDelete = (id: string) => null // delete current atom and focus on a previous one
+        }
+        const onDelete = (id: string) => {
+            if (!this.isAtomFirstInLine(id)) {
+                this.deleteAtom(id) // delete current atom and focus on a previous one
+            }
+        }
         const onEnterEdit = (id: string) => this.setEditing(id)
         const onBlur = (id: string) => {
             if (this.state.editingAtomId === id) {
                 this.unsetEditing()
             }
         }
-        // const onEnterView = this.unsetEditing.bind(this) // this.setState({ editingAtomId: '' })
 
         return this.state.parsedAtoms.map((atom: IAtomExchange) => {
             const props: IAtomProps = {

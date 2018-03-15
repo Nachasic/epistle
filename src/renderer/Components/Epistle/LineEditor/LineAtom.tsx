@@ -9,6 +9,7 @@ import Modal from 'material-ui/Modal'
 import * as styles from '../Styles/LineAtom.css'
 
 const DOUBLE_CLICK_DEBOUNCE_TIME: number = 250
+const BACKSPACE_KEYCODE: number = 8
 
 export interface ILineEditorAtomProps {
     id: string,
@@ -25,7 +26,8 @@ export interface ILineEditorAtomProps {
 }
 
 export interface ILineEditorAtomState {
-    mode: 'VIEW' | 'EDIT'
+    mode: 'VIEW' | 'EDIT',
+    isEmpty: boolean
 }
 
 const defaultAtom: Epistle.ILineAtom = {
@@ -40,7 +42,8 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
         super(props)
 
         this.state = {
-            mode: props.editmode || !props.atom ? 'EDIT' : 'VIEW'
+            mode: props.editmode || !props.atom ? 'EDIT' : 'VIEW',
+            isEmpty: !(props.atom && props.atom.value)
         }
     }
 
@@ -78,6 +81,10 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
                 value: words[0]
             }
 
+            if (value === this.props.atom.value) {
+                return null
+            }
+
             if (words.length > 1) {
                 this.props.onSpace(newAtom, this.props.id, words[words.length - 1])
                 // this.View()
@@ -95,17 +102,35 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
         }
         const inputProperties = {
             onBlur: handleUnfocus,
-            className: styles.inputField
+            className: styles.inputField,
+            onFocus: (event: React.FocusEvent<HTMLInputElement>) => {
+                const tempValue: string = event.currentTarget.value
+                event.currentTarget.value = ''
+                event.currentTarget.value = tempValue
+            }
         }
+        const backspaceHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
+            if (event.keyCode === BACKSPACE_KEYCODE) {
+                this.props.onDelete(this.props.id)
+            }
+        }
+        const defaultHandlers = {
+            onChange: handleChange
+        }
+        const handlers = this.state.isEmpty
+            ? {
+                ...defaultHandlers,
+                onKeyDown: backspaceHandler
+            } : defaultHandlers
 
         return (
             <TextField
                 className={styles.input}
                 autoFocus
-                value={atom.value}
-                onChange={handleChange}
                 margin="dense"
+                value={atom.value}
                 inputProps={inputProperties}
+                {...handlers}
             />
         )
     }
@@ -131,11 +156,12 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
     // }
 
     componentWillReceiveProps (nextProps: ILineEditorAtomProps) {
-        if (nextProps.editmode) {
-            return this.setState({ mode: 'EDIT' })
-        }
+        const state: ILineEditorAtomState = { ...this.state }
 
-        return this.setState({ mode: 'VIEW' })
+        state.mode = nextProps.editmode ? 'EDIT' : 'VIEW'
+        state.isEmpty = !(nextProps.atom && nextProps.atom.value)
+
+        return this.setState(state)
     }
 
     render () {
