@@ -11,7 +11,6 @@ export interface IAtomSequenceProps {
     line: Epistle.IEpistleLine,
     onLineChange: (line: Epistle.IEpistleLine) => any,
     onAtomSelect: (selectedAtoms: Epistle.ILineAtom[]) => any,
-    // reportSelectedAtoms?: (selectedAtoms: Epistle.ILineAtom[]) => any
 }
 
 // Dedicated interface for exchangind atom data between line editor components
@@ -126,7 +125,7 @@ export default class AtomSequence extends React.PureComponent<IAtomSequenceProps
             scheduledAtomUpdateIndex: deletedIndex - 1
         })
         this.updateLineByAtomExchangeList(newParsedAtoms)
-        this.reportSelectedAtoms(this.state.selectedAtomIds)
+        this.updateAtomSelection(id)
     }
 
     private reportSelectedAtoms (ids: string[]): void {
