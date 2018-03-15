@@ -13,13 +13,14 @@ const DOUBLE_CLICK_DEBOUNCE_TIME: number = 250
 export interface ILineEditorAtomProps {
     id: string,
     selected?: boolean,
+    editmode?: boolean,
     atom?: Epistle.ILineAtom,
-    onChange: (atom: Epistle.ILineAtom) => any,
+    onChange: (id: string, atom: Epistle.ILineAtom) => any,
     onClick: (id: string) => any,
-    onSpace: (tail: string) => any,
-    onEnterEdit?: () => any,
+    onSpace: (atom: Epistle.ILineAtom, id: string, tail: string) => any,
+    onEnterEdit?: (id: string) => any,
     onEnterView?: () => any,
-    onDelete: Function
+    onDelete: (id: string) => any
 }
 
 export interface ILineEditorAtomState {
@@ -38,24 +39,17 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
         super(props)
 
         this.state = {
-            mode: props.atom ? 'VIEW' : 'EDIT'
+            mode: props.editmode || !props.atom ? 'EDIT' : 'VIEW'
         }
     }
 
-    public Edit (): void {
-        this.setState({ mode: 'EDIT' })
-    }
-
-    public View (): void {
-        this.setState({ mode: 'VIEW' })
-    }
-
-    renderChip () {
+    private renderChip () {
         let doubleClicked: boolean = false
         const atom: Epistle.ILineAtom = this.props.atom ? this.props.atom : defaultAtom
         const handleDoubleClick = () => {
             doubleClicked = true
-            this.setState({ mode: 'EDIT' })
+            // this.Edit()
+            this.props.onEnterEdit(this.props.id)
         }
         const handleClick = debounce(() => {
             if (!doubleClicked) {
@@ -73,29 +67,30 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
         )
     }
 
-    renderIntput () {
+    private renderIntput () {
         const atom: Epistle.ILineAtom = this.props.atom ? this.props.atom : defaultAtom
-
         const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
             const value = event.target.value.replace(/\s+/g, ' ') // Deal with multiple spaces
             const words = value.split(' ')
-
-            this.props.onChange({
+            const newAtom: Epistle.ILineAtom = {
                 ...atom,
                 value: words[0]
-            })
+            }
 
             if (words.length > 1) {
-                this.props.onSpace(words[words.length - 1])
-                this.setState({ mode: 'VIEW' })
+                this.props.onSpace(newAtom, this.props.id, words[words.length - 1])
+                // this.View()
+            } else {
+                this.props.onChange(this.props.id, newAtom)
             }
         }
         const handleUnfocus = (event: React.FormEvent<HTMLInputElement>) => {
             if (event.currentTarget && event.currentTarget.value) {
-                return this.setState({ mode: 'VIEW' })
+                // return this.View()
+                return null
             }
 
-            return this.props.onDelete()
+            return this.props.onDelete(this.props.id)
         }
         const inputProperties = {
             onBlur: handleUnfocus,
@@ -114,17 +109,39 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
         )
     }
 
+    // public Edit (): void {
+    //     if (this.props.onEnterEdit) {
+    //         this.props.onEnterEdit(this.props.id)
+    //     }
+    //     this.setState({ mode: 'EDIT' })
+    // }
+
+    // public View (): void {
+    //     if (this.props.onEnterView) {
+    //         this.props.onEnterView()
+    //     }
+    //     this.setState({ mode: 'VIEW' })
+    // }
+
+    // componentWillMount () {
+    //     if (nextProps.editmode) {
+    //         this.setState({ mode: 'EDIT' })
+    //     }
+    // }
+
+    componentWillReceiveProps (nextProps: ILineEditorAtomProps) {
+        if (nextProps.editmode) {
+            return this.setState({ mode: 'EDIT' })
+        }
+
+        return this.setState({ mode: 'VIEW' })
+    }
+
     render () {
         switch (this.state.mode) {
         case 'VIEW':
-            if (this.props.onEnterView) {
-                this.props.onEnterView()
-            }
             return this.renderChip()
         default:
-            if (this.props.onEnterEdit) {
-                this.props.onEnterEdit()
-            }
             return this.renderIntput()
         }
 

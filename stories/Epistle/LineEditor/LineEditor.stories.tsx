@@ -100,11 +100,11 @@ storiesOf('Epistle line editor components', module)
             })
             return action(store.state.selected ? 'selected' : 'deselected')(id)
         }
-        const changeCallback = (atom: Epistle.ILineAtom) => {
+        const changeCallback = (id: string, atom: Epistle.ILineAtom) => {
             store.set({ atom })
             return action('atom-changed')(atom)
         }
-        const spaceCallback = (tail: string) => action('Thrown tail')(tail)
+        const spaceCallback = (id: string, tail: string) => action('Thrown tail')(tail)
 
         return beautifulWrapping(
             <LineAtom
@@ -126,9 +126,14 @@ storiesOf('Epistle line editor components', module)
     .add('Line atom sequence', withState<any>({
         line: Fixtures.sampleLine1
     }, (store) => {
+        const onChange = (line: Epistle.IEpistleLine) => {
+            store.set({ line })
+            return action('line-changed')(line)
+        }
         return beautifulWrapping(
             <AtomSequence
                 {...store.state}
+                onLineChange={onChange}
             />,
             'Atom sequence',
             <Markdown

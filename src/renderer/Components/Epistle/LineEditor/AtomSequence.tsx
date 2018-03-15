@@ -20,6 +20,7 @@ export interface IAtomExchange {
 }
 
 export interface IAtomSequenceState {
+    scheduledAtomUpdateIndex: number,
     editingAtomId: string,
     parsedAtoms: IAtomExchange[],
     selectedAtomIds: string[]
@@ -32,31 +33,76 @@ export default class AtomSequence extends React.PureComponent<IAtomSequenceProps
         super(props)
 
         const state: IAtomSequenceState = {
+            scheduledAtomUpdateIndex: null,
             editingAtomId: '',
             parsedAtoms: [],
             selectedAtomIds: []
-        }
-
-        if (props.line.line.length) {
-            state.parsedAtoms = this.parseAtoms(props.line.line)
         }
 
         this.state = state
     }
 
     private parseAtoms (atoms: Epistle.ILineAtom[]): IAtomExchange[] {
-        const parsedAtoms: IAtomExchange[] = atoms.map((atom: Epistle.ILineAtom): IAtomExchange => ({
-            id: shortid.generate() as string,
-            atom
-        }))
+        const oldParsedAtoms: IAtomExchange[] = this.state && this.state.parsedAtoms
+        const parsedAtoms: IAtomExchange[] = atoms.map((atom: Epistle.ILineAtom, index: number): IAtomExchange => {
+            const exchangeId: string = oldParsedAtoms.length && oldParsedAtoms[index]
+                ? oldParsedAtoms[index].id
+                : shortid.generate() as string
 
+            return {
+                id: exchangeId,
+                atom
+            }
+        })
         return parsedAtoms
     }
 
-    // private updateLine (): void {
-    //     // gather the changes in atoms and update line
-    //     return
-    // }
+    private updateLineByAtom (id: string, atom: Epistle.ILineAtom): void {
+        const newLine: Epistle.IEpistleLine = {
+            ...this.props.line,
+            line: this.state.parsedAtoms.map((value: IAtomExchange): Epistle.ILineAtom => {
+                if (value.id === id) {
+                    return { ...atom }
+                }
+                return { ...value.atom }
+            })
+        }
+
+        this.props.onLineChange(newLine)
+    }
+
+    private updateLineByAtomExchangeList (list: IAtomExchange[]): void {
+        const newAtoms: Epistle.ILineAtom[] = list.map((value: IAtomExchange): Epistle.ILineAtom => ({ ...value.atom }))
+        const newLine: Epistle.IEpistleLine = {
+            ...this.props.line,
+            line: newAtoms
+        }
+
+        this.props.onLineChange(newLine)
+    }
+
+    private insertAtomAfterAtomId (atom: Epistle.ILineAtom, predecessorId: string, predecessor: Epistle.ILineAtom): void {
+        const newParsedAtoms: IAtomExchange[] = [...this.state.parsedAtoms]
+        const newAtomExchange: IAtomExchange = {
+            id: shortid.generate(),
+            atom
+        }
+        const predecessorIndex: number = newParsedAtoms.findIndex((value: IAtomExchange) => value.id === predecessorId)
+        const targetIndex: number = predecessorIndex >= 0
+            ? predecessorIndex + 1
+            : newParsedAtoms.length
+        newParsedAtoms[predecessorIndex] = {
+            id: predecessorId,
+            atom: predecessor
+        }
+        newParsedAtoms.splice(targetIndex, 0, newAtomExchange)
+
+        this.setState({
+            parsedAtoms: newParsedAtoms,
+            scheduledAtomUpdateIndex: targetIndex
+        })
+        this.updateLineByAtomExchangeList(newParsedAtoms)
+    }
 
     private updateAtomSelection (id: string): void {
         this.setState((prevState: Readonly<IAtomSequenceState>, props: IAtomSequenceProps): IAtomSequenceState => {
@@ -72,20 +118,29 @@ export default class AtomSequence extends React.PureComponent<IAtomSequenceProps
         })
     }
 
-    // private insertNewAtomAfterId (id: string, tail: string): void {
-    //     // catch a tail into a new atom
-    //     // insert new atom
-    //     // update state.editingAtomId
-    //     this.updateLine()
-    // }
+    private setEditing (id: string) {
+        if (this.state.editingAtomId !== id) {
+            this.setState({ editingAtomId: id })
+        }
+    }
+
+    private unsetEditing () {
+        this.setState({ editingAtomId: '' })
+    }
 
     private renderAtoms () {
-        const onChange = () => null // update line
+        const onChange = (id: string, atom: Epistle.ILineAtom) => this.updateLineByAtom(id, atom) // update line
         const onClick = (id: string) => this.updateAtomSelection(id) // update atom selection
-        const onSpace = () => null // insert new atom after current one
-        const onDelete = () => null // delete current atom and focus on a previous one
-        const onEnterEdit = () => null
-        const onEnterView = () => null
+        const onSpace = (atom: Epistle.ILineAtom, id: string, tail: string) => {
+            const newAtom: Epistle.ILineAtom = {
+                type: 'WORD',
+                value: tail
+            }
+            this.insertAtomAfterAtomId(newAtom, id, atom)
+        } // insert new atom after current one
+        const onDelete = (id: string) => null // delete current atom and focus on a previous one
+        const onEnterEdit = (id: string) => this.setEditing(id)
+        // const onEnterView = this.unsetEditing.bind(this) // this.setState({ editingAtomId: '' })
 
         return this.state.parsedAtoms.map((atom: IAtomExchange) => {
             const props: IAtomProps = {
@@ -97,22 +152,38 @@ export default class AtomSequence extends React.PureComponent<IAtomSequenceProps
                 onSpace,
                 onDelete,
                 onEnterEdit,
-                onEnterView
+                // onEnterView,
+                editmode: this.state.editingAtomId === atom.id
             }
 
             return <LineAtom key={atom.id} {...props} />
         })
     }
 
-    shouldComponentUpdate (nextProps: Readonly<IAtomSequenceProps>, nextState: Readonly<IAtomSequenceState>): boolean {
-        const differentProps: boolean = nextProps.line !== this.props.line
-            || nextProps.onAtomSelect !== this.props.onAtomSelect
-            || nextProps.onLineChange !== this.props.onLineChange
-        const differentState: boolean = nextState.selectedAtomIds.join(' ') !== this.state.selectedAtomIds.join(' ')
-            || nextState.parsedAtoms !== this.state.parsedAtoms
-            || nextState.editingAtomId !== this.state.editingAtomId
+    componentDidUpdate () {
+        const indexToEdit: number = this.state.scheduledAtomUpdateIndex
+        const atomExchangeList: IAtomExchange[] = this.state.parsedAtoms
 
-        return differentProps || differentState
+        if (indexToEdit !== null) {
+            this.setState({
+                scheduledAtomUpdateIndex: null,
+                editingAtomId: atomExchangeList[indexToEdit]
+                    ? atomExchangeList[indexToEdit].id
+                    : atomExchangeList[atomExchangeList.length - 1].id
+            })
+        }
+    }
+
+    componentWillReceiveProps (nextProps: IAtomSequenceProps): void {
+        const parsedAtoms = this.parseAtoms(nextProps.line.line)
+
+        this.setState({parsedAtoms})
+    }
+
+    componentWillMount () {
+        if (this.props.line.line.length) {
+            this.setState({ parsedAtoms: this.parseAtoms(this.props.line.line) })
+        }
     }
 
     render () {
