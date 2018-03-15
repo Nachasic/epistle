@@ -140,6 +140,11 @@ export default class AtomSequence extends React.PureComponent<IAtomSequenceProps
         } // insert new atom after current one
         const onDelete = (id: string) => null // delete current atom and focus on a previous one
         const onEnterEdit = (id: string) => this.setEditing(id)
+        const onBlur = (id: string) => {
+            if (this.state.editingAtomId === id) {
+                this.unsetEditing()
+            }
+        }
         // const onEnterView = this.unsetEditing.bind(this) // this.setState({ editingAtomId: '' })
 
         return this.state.parsedAtoms.map((atom: IAtomExchange) => {
@@ -152,6 +157,7 @@ export default class AtomSequence extends React.PureComponent<IAtomSequenceProps
                 onSpace,
                 onDelete,
                 onEnterEdit,
+                onBlur,
                 // onEnterView,
                 editmode: this.state.editingAtomId === atom.id
             }

@@ -19,7 +19,8 @@ export interface ILineEditorAtomProps {
     onClick: (id: string) => any,
     onSpace: (atom: Epistle.ILineAtom, id: string, tail: string) => any,
     onEnterEdit?: (id: string) => any,
-    onEnterView?: () => any,
+    // onEnterView?: () => any,
+    onBlur?: (id: string) => any,
     onDelete: (id: string) => any
 }
 
@@ -87,7 +88,7 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
         const handleUnfocus = (event: React.FormEvent<HTMLInputElement>) => {
             if (event.currentTarget && event.currentTarget.value) {
                 // return this.View()
-                return null
+                return this.props.onBlur ? this.props.onBlur(this.props.id) : null
             }
 
             return this.props.onDelete(this.props.id)
