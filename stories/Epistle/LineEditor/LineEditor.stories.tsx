@@ -89,6 +89,7 @@ const beautifulWrapping = (element, header, annotation) =>
 storiesOf('Epistle line editor components', module)
     .add('Line atom', withState<any>({
         selected: false,
+        editmode: false,
         atom: {
             type: 'WORD',
             value: 'helloworld'
@@ -104,7 +105,15 @@ storiesOf('Epistle line editor components', module)
             store.set({ atom })
             return action('atom-changed')(atom)
         }
-        const spaceCallback = (id: string, tail: string) => action('Thrown tail')(tail)
+        const spaceCallback = (atom: Epistle.ILineAtom, id: string, tail: string) => {
+            store.set({ atom })
+            return action('tail-thrown')(tail)
+        }
+        const editCallback = () => {
+            store.set({
+                editmode: !store.state.editmode
+            })
+        }
 
         return beautifulWrapping(
             <LineAtom
@@ -113,6 +122,8 @@ storiesOf('Epistle line editor components', module)
                 onClick={clickCallback}
                 onSpace={spaceCallback}
                 onDelete={action('atom-deleted')}
+                onEnterEdit={editCallback}
+                onBlur={editCallback}
                 id="testline1"
             />,
             'Line atom',
