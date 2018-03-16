@@ -3,7 +3,6 @@ import { shallow, mount } from 'enzyme'
 
 import LineAtom, { ILineEditorAtomProps, ILineEditorAtomState } from '../../../../src/renderer/Components/Epistle/LineEditor/LineAtom'
 
-// import Chip from 'material-ui/Chip'
 import ButtonBase from 'material-ui/ButtonBase'
 import TextField from 'material-ui/TextField'
 

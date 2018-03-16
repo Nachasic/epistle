@@ -101,8 +101,8 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
                 this.props.onChange(this.props.id, newAtom)
             }
         }
-        const handleUnfocus = (event: React.FormEvent<HTMLInputElement>) => {
-            if (event.currentTarget && event.currentTarget.value) {
+        const handleUnfocus = (event) => {
+            if (event.target && event.currentTarget.value !== '') {
                 return this.props.onBlur ? this.props.onBlur(this.props.id) : null
             }
 

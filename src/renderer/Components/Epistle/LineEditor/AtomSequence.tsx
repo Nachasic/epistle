@@ -205,7 +205,6 @@ export default class AtomSequence extends React.PureComponent<IAtomSequenceProps
                 onDelete,
                 onEnterEdit,
                 onBlur,
-                // onEnterView,
                 editmode: this.state.editingAtomId === atom.id
             }
 
