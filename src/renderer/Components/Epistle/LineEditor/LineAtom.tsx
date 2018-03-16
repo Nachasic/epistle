@@ -91,7 +91,7 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
                 return null
             }
 
-            if (value === this.props.atom.value) {
+            if (value === atom.value) {
                 return null
             }
 

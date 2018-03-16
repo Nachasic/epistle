@@ -12,7 +12,7 @@ describe('Line Atom editor tests', () => {
         expect(LineAtom).toBeDefined()
     })
 
-    describe.skip('Editing mode', () => {
+    describe('Editing mode', () => {
         const changeCallback: Function = jest.fn()
         const deleteCallback: Function = jest.fn()
         const clickCallback: Function = jest.fn()
@@ -20,9 +20,10 @@ describe('Line Atom editor tests', () => {
 
         const props: ILineEditorAtomProps = {
             id: 'basicID',
+            editmode: true,
             onChange: (id: string, atom: Epistle.ILineAtom) => changeCallback(atom),
             onClick: (id: string) => clickCallback(id),
-            onSpace: (atom: Epistle.ILineAtom, id: string, tail: string) => spaceCallback(tail),
+            onSpace: (atom: Epistle.ILineAtom, id: string, tail: string) => spaceCallback(atom, id, tail),
             onDelete: (id: string) => deleteCallback(id)
         }
         let wrapper
@@ -74,7 +75,7 @@ describe('Line Atom editor tests', () => {
             expect(changeCallback).toHaveBeenCalledWith(expectedAtom)
         })
 
-        it('should exit editing mode and fire a callback once space is pressed', () => {
+        it('should fire a callback once space is pressed', () => {
             const input = wrapper.find(TextField)
             const NEW_VALUE: string[] = ['Some', 'value']
             const expectedAtom: Epistle.ILineAtom = {
@@ -84,18 +85,11 @@ describe('Line Atom editor tests', () => {
             const expectedTail = NEW_VALUE[1]
 
             input.simulate('change', { target: { value: NEW_VALUE.join(' ') } })
-            expect(changeCallback).toHaveBeenCalledWith(expectedAtom)
-            expect(spaceCallback).toHaveBeenCalledWith(expectedTail)
-            expect(wrapper.state().mode).toEqual('VIEW')
-        })
-
-        it('should enter viewing mode when asked to', () => {
-            wrapper.instance().View()
-            expect(wrapper.state().mode).toEqual('VIEW')
+            expect(spaceCallback).toHaveBeenCalledWith(expectedAtom, props.id, expectedTail)
         })
     })
 
-    describe.skip('Viewing mode', () => {
+    describe('Viewing mode', () => {
         const changeCallback: jest.Mock<any> = jest.fn()
         const deleteCallback: jest.Mock<any> = jest.fn()
         const clickCallback: jest.Mock<any> = jest.fn()
@@ -142,21 +136,10 @@ describe('Line Atom editor tests', () => {
             expect(chip.text()).toEqual(props.atom.value)
         })
 
-        it('should enter editing mode when double-clicked', () => {
+        it('should report to enter editing mode when double-clicked', () => {
             const chip = wrapper.find(ButtonBase)
 
             chip.simulate('doubleclick')
-            expect(wrapper.state().mode).toEqual('EDIT')
-        })
-
-        it('should enter editing mode when asked to', () => {
-            wrapper.instance().Edit()
-            expect(wrapper.state().mode).toEqual('EDIT')
-        })
-
-        it('should fire a callback when entering editing mode', () => {
-            wrapper.instance().Edit()
-
             expect(onEditCallback).toHaveBeenCalledWith(props.id)
         })
 
