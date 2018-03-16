@@ -18,3 +18,7 @@ export function * entries (object: any) {
         }
     }
 }
+
+export const moveCursorToTheEnd = (target: HTMLInputElement): void => {
+    target.selectionStart = target.selectionEnd = target.value.length
+}

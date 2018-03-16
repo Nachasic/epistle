@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { debounce } from '../../../Utils'
+import { debounce, moveCursorToTheEnd } from '../../../Utils'
 
 import TextField from 'material-ui/TextField'
 import ButtonBase from 'material-ui/ButtonBase'
@@ -8,6 +8,13 @@ import Modal from 'material-ui/Modal'
 
 import * as styles from '../Styles/LineAtom.css'
 
+// When input field is focusing, we set a timeout to halt any
+// value changes — so when deleting a forwardstanding atom
+// backspace, the first symbol of the now-focused atom doesn't
+// gets eaten instantly. The number is based on the typical
+// keypress timings (which are 50-300ms, here we use a medium value).
+// https://stackoverflow.com/questions/22505698/what-is-a-typical-keypress-duration
+const FOCUS_DURATION: number = 175
 const DOUBLE_CLICK_DEBOUNCE_TIME: number = 250
 const BACKSPACE_KEYCODE: number = 8
 
@@ -20,7 +27,6 @@ export interface ILineEditorAtomProps {
     onClick: (id: string) => any,
     onSpace: (atom: Epistle.ILineAtom, id: string, tail: string) => any,
     onEnterEdit?: (id: string) => any,
-    // onEnterView?: () => any,
     onBlur?: (id: string) => any,
     onDelete: (id: string) => any
 }
@@ -52,7 +58,6 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
         const atom: Epistle.ILineAtom = this.props.atom ? this.props.atom : defaultAtom
         const handleDoubleClick = () => {
             doubleClicked = true
-            // this.Edit()
             this.props.onEnterEdit(this.props.id)
         }
         const handleClick = debounce(() => {
@@ -72,6 +77,7 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
     }
 
     private renderIntput () {
+        let isFocusing: boolean = false
         const atom: Epistle.ILineAtom = this.props.atom ? this.props.atom : defaultAtom
         const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
             const value = event.target.value.replace(/\s+/g, ' ') // Deal with multiple spaces
@@ -81,20 +87,22 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
                 value: words[0]
             }
 
+            if (isFocusing) {
+                return null
+            }
+
             if (value === this.props.atom.value) {
                 return null
             }
 
             if (words.length > 1) {
                 this.props.onSpace(newAtom, this.props.id, words[words.length - 1])
-                // this.View()
             } else {
                 this.props.onChange(this.props.id, newAtom)
             }
         }
         const handleUnfocus = (event: React.FormEvent<HTMLInputElement>) => {
             if (event.currentTarget && event.currentTarget.value) {
-                // return this.View()
                 return this.props.onBlur ? this.props.onBlur(this.props.id) : null
             }
 
@@ -104,9 +112,9 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
             onBlur: handleUnfocus,
             className: styles.inputField,
             onFocus: (event: React.FocusEvent<HTMLInputElement>) => {
-                const tempValue: string = event.currentTarget.value
-                event.currentTarget.value = ''
-                event.currentTarget.value = tempValue
+                isFocusing = true
+                moveCursorToTheEnd(event.currentTarget)
+                setTimeout(() => isFocusing = false, FOCUS_DURATION)
             }
         }
         const backspaceHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -134,26 +142,6 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
             />
         )
     }
-
-    // public Edit (): void {
-    //     if (this.props.onEnterEdit) {
-    //         this.props.onEnterEdit(this.props.id)
-    //     }
-    //     this.setState({ mode: 'EDIT' })
-    // }
-
-    // public View (): void {
-    //     if (this.props.onEnterView) {
-    //         this.props.onEnterView()
-    //     }
-    //     this.setState({ mode: 'VIEW' })
-    // }
-
-    // componentWillMount () {
-    //     if (nextProps.editmode) {
-    //         this.setState({ mode: 'EDIT' })
-    //     }
-    // }
 
     componentWillReceiveProps (nextProps: ILineEditorAtomProps) {
         const state: ILineEditorAtomState = { ...this.state }
