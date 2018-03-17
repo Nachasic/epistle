@@ -103,7 +103,7 @@ describe('Line editor atom sequence tests', () => {
 
         it('should register line changes', () => {
             const lastAtom = wrapper.findWhere(n =>
-                n.props().atom === props.line.line[props.line.line.length - 1])
+                n.props().atom === props.line.line[props.line.line.length - 1]).last()
             const newAtoms: Epistle.ILineAtom[] = [...props.line.line]
             const TEST_VALUE: string = 'TEST'
             newAtoms[newAtoms.length - 1] = {
@@ -126,7 +126,7 @@ describe('Line editor atom sequence tests', () => {
 
         it('should remove atom with backspace while editing, if the value is empty', () => {
             const lastAtom = wrapper.findWhere(n =>
-                n.props().atom === props.line.line[props.line.line.length - 1])
+                n.props().atom === props.line.line[props.line.line.length - 1]).last()
             const firstAtom = wrapper.find(LineAtom).first()
             const newAtoms: Epistle.ILineAtom[] = [...props.line.line]
             newAtoms.pop()

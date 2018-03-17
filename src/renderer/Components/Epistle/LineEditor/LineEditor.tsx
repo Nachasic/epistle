@@ -1,5 +1,8 @@
 import * as React from 'react'
 
+import Line from '../Line'
+import AtomSequence from './AtomSequence'
+
 export interface ILineEditorProps {
     line: Epistle.IEpistleLine,
     children?: string

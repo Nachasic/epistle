@@ -1,12 +1,16 @@
 import * as React from 'react'
 
 import { debounce, moveCursorToTheEnd } from '../../../Utils'
+import WithRoot from '../../../withRoot'
 
 import TextField from 'material-ui/TextField'
 import ButtonBase from 'material-ui/ButtonBase'
 import Modal from 'material-ui/Modal'
 
+import { Theme, withStyles, WithStyles } from 'material-ui/styles'
+
 import * as styles from '../Styles/LineAtom.css'
+import Line from '../Line';
 
 // When input field is focusing, we set a timeout to halt any
 // value changes — so when deleting a forwardstanding atom
@@ -15,7 +19,7 @@ import * as styles from '../Styles/LineAtom.css'
 // keypress timings (which are 50-300ms, here we use a medium value).
 // https://stackoverflow.com/questions/22505698/what-is-a-typical-keypress-duration
 const FOCUS_DURATION: number = 175
-const DOUBLE_CLICK_DEBOUNCE_TIME: number = 250
+const DOUBLE_CLICK_DEBOUNCE_TIME: number = 200
 const BACKSPACE_KEYCODE: number = 8
 
 export interface ILineEditorAtomProps {
@@ -31,6 +35,15 @@ export interface ILineEditorAtomProps {
     onDelete: (id: string) => any
 }
 
+const style = (theme: Theme) => ({
+    selected: {
+        backgroundColor: theme.palette.secondary.main,
+        color: theme.palette.getContrastText(theme.palette.secondary.main)
+    }
+})
+
+export type PropsWithStyle = ILineEditorAtomProps & WithStyles<'selected'>
+
 export interface ILineEditorAtomState {
     mode: 'VIEW' | 'EDIT',
     isEmpty: boolean
@@ -41,10 +54,10 @@ const defaultAtom: Epistle.ILineAtom = {
     value: ''
 }
 
-export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, ILineEditorAtomState> {
-    public props: ILineEditorAtomProps
+export class LineAtom extends React.PureComponent<PropsWithStyle, ILineEditorAtomState> {
+    public props: PropsWithStyle
 
-    constructor (props: ILineEditorAtomProps) {
+    constructor (props: PropsWithStyle) {
         super(props)
 
         this.state = {
@@ -67,7 +80,7 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
         }, DOUBLE_CLICK_DEBOUNCE_TIME)
         return (
             <ButtonBase
-                className={this.props.selected ? `${styles.button} ${styles.selected}` : styles.button}
+                className={this.props.selected ? `${styles.button} ${this.props.classes.selected}` : styles.button}
                 onDoubleClick={handleDoubleClick}
                 onClick={handleClick}
             >
@@ -162,3 +175,5 @@ export default class LineAtom extends React.PureComponent<ILineEditorAtomProps, 
 
     }
 }
+
+export default withStyles(style)<ILineEditorAtomProps>(LineAtom)

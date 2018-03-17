@@ -4,7 +4,7 @@
     margin: 16px 0 8px !important;
     padding: 6px 4px 7px !important;
     background-color: transparent;
-    transition: background-color 10;
+    transition: background-color .5s;
 }
 
 :local(.selected) {

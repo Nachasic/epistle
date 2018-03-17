@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { shallow, mount } from 'enzyme'
 
-import LineAtom, { ILineEditorAtomProps, ILineEditorAtomState } from '../../../../src/renderer/Components/Epistle/LineEditor/LineAtom'
+import { LineAtom, PropsWithStyle as ILineEditorAtomProps, ILineEditorAtomState } from '../../../../src/renderer/Components/Epistle/LineEditor/LineAtom'
 
 import ButtonBase from 'material-ui/ButtonBase'
 import TextField from 'material-ui/TextField'
@@ -23,7 +23,10 @@ describe('Line Atom editor tests', () => {
             onChange: (id: string, atom: Epistle.ILineAtom) => changeCallback(atom),
             onClick: (id: string) => clickCallback(id),
             onSpace: (atom: Epistle.ILineAtom, id: string, tail: string) => spaceCallback(atom, id, tail),
-            onDelete: (id: string) => deleteCallback(id)
+            onDelete: (id: string) => deleteCallback(id),
+            classes: {
+                selected: 'selected'
+            }
         }
         let wrapper
 
@@ -54,7 +57,10 @@ describe('Line Atom editor tests', () => {
                 onChange: (id: string, atom: Epistle.ILineAtom) => changeCallback(atom),
                 onClick: (id: string) => clickCallback(id),
                 onSpace: (atom: Epistle.ILineAtom, id: string, tail: string) => spaceCallback(tail),
-                onDelete: (id: string) => deleteCallback(id)
+                onDelete: (id: string) => deleteCallback(id),
+                classes: {
+                    selected: 'selected'
+                }
             }
             const newWrapper = wrapper.setProps(newProps)
             const input = newWrapper.find(TextField)
@@ -105,6 +111,9 @@ describe('Line Atom editor tests', () => {
             atom: {
                 type: 'WORD',
                 value: 'Hello'
+            },
+            classes: {
+                selected: 'selected'
             }
         }
         let wrapper
