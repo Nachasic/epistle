@@ -8,8 +8,6 @@ import ButtonBase from 'material-ui/ButtonBase'
 import Modal from 'material-ui/Modal'
 
 import { Theme, withStyles, WithStyles } from 'material-ui/styles'
-
-import * as styles from '../Styles/LineAtom.css'
 import Line from '../Line';
 
 // When input field is focusing, we set a timeout to halt any
@@ -39,10 +37,18 @@ const style = (theme: Theme) => ({
     selected: {
         backgroundColor: theme.palette.secondary.main,
         color: theme.palette.getContrastText(theme.palette.secondary.main)
+    },
+    button: {
+        fontSize: theme.typography.button.fontSize,
+        padding: `${theme.spacing.unit}px ${theme.spacing.unit / 2}px`,
+        transition: 'background-color 0.4s'
+    },
+    input: {
+        fontSize: theme.typography.button.fontSize
     }
 })
 
-export type PropsWithStyle = ILineEditorAtomProps & WithStyles<'selected'>
+export type PropsWithStyle = ILineEditorAtomProps & WithStyles<'selected' | 'button' | 'input'>
 
 export interface ILineEditorAtomState {
     mode: 'VIEW' | 'EDIT',
@@ -80,7 +86,7 @@ export class LineAtom extends React.PureComponent<PropsWithStyle, ILineEditorAto
         }, DOUBLE_CLICK_DEBOUNCE_TIME)
         return (
             <ButtonBase
-                className={this.props.selected ? `${styles.button} ${this.props.classes.selected}` : styles.button}
+                className={this.props.selected ? `${this.props.classes.button} ${this.props.classes.selected}` : this.props.classes.button}
                 onDoubleClick={handleDoubleClick}
                 onClick={handleClick}
             >
@@ -104,7 +110,7 @@ export class LineAtom extends React.PureComponent<PropsWithStyle, ILineEditorAto
                 return null
             }
 
-            if (value === atom.value) {
+            if (value === atom.value || value === ' ') {
                 return null
             }
 
@@ -122,13 +128,14 @@ export class LineAtom extends React.PureComponent<PropsWithStyle, ILineEditorAto
             return this.props.onDelete(this.props.id)
         }
         const inputProperties = {
-            onBlur: handleUnfocus,
-            className: styles.inputField,
+            // onBlur: handleUnfocus,
+            // className: styles.inputField,
             onFocus: (event: React.FocusEvent<HTMLInputElement>) => {
                 isFocusing = true
                 moveCursorToTheEnd(event.currentTarget)
                 setTimeout(() => isFocusing = false, FOCUS_DURATION)
-            }
+            },
+            className: this.props.classes.input
         }
         const backspaceHandler = (event: React.KeyboardEvent<HTMLDivElement>) => {
             if (event.keyCode === BACKSPACE_KEYCODE) {
@@ -146,9 +153,7 @@ export class LineAtom extends React.PureComponent<PropsWithStyle, ILineEditorAto
 
         return (
             <TextField
-                className={styles.input}
                 autoFocus
-                margin="dense"
                 value={atom.value}
                 inputProps={inputProperties}
                 {...handlers}

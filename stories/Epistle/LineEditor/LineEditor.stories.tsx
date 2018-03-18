@@ -7,13 +7,15 @@ import Grid from 'material-ui/Grid'
 import Paper from 'material-ui/Paper'
 import Typography from 'material-ui/Typography'
 import Markdown from 'markdown-to-jsx'
+import CssBaseline from 'material-ui/CssBaseline'
 import '../../../src/renderer/Stylesheets/fonts.scss'
 
 import * as Descriptions from './LineEditor.descriptions'
 import * as Fixtures from './LineEditor.fixtures'
 
 import LineAtom, { ILineEditorAtomProps as IAtomProps} from '../../../src/renderer/Components/Epistle/LineEditor/LineAtom'
-import AtomSequence, { IAtomSequenceProps } from '../../../src/renderer/Components/Epistle/LineEditor/AtomSequence'
+import AtomSequence from '../../../src/renderer/Components/Epistle/LineEditor/AtomSequence'
+import LineDirector from '../../../src/renderer/Components/Epistle/LineEditor/LineDirector'
 
 const styles = {
     root: {
@@ -71,6 +73,7 @@ const mdOptions = {
 
 const beautifulWrapping = (element, header, annotation) =>
     <div style={styles.root}>
+        <CssBaseline />
         <Grid container spacing={16}>
             <Grid item xs={12}>
                 <Paper style={styles.paper}>
@@ -152,6 +155,19 @@ storiesOf('Epistle line editor components', module)
             <Markdown
                 options={mdOptions}
                 children={Descriptions.atomSequence}
+            />
+        )
+    }))
+
+    .add('Line director', withState<any>({
+        atoms: []
+    }, (store) => {
+        return beautifulWrapping(
+            <LineDirector />,
+            'Line director',
+            <Markdown
+                options={mdOptions}
+                children={'Some description'}
             />
         )
     }))

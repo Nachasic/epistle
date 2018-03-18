@@ -25,7 +25,9 @@ describe('Line Atom editor tests', () => {
             onSpace: (atom: Epistle.ILineAtom, id: string, tail: string) => spaceCallback(atom, id, tail),
             onDelete: (id: string) => deleteCallback(id),
             classes: {
-                selected: 'selected'
+                selected: 'selected',
+                button: 'button',
+                input: ''
             }
         }
         let wrapper
@@ -59,7 +61,9 @@ describe('Line Atom editor tests', () => {
                 onSpace: (atom: Epistle.ILineAtom, id: string, tail: string) => spaceCallback(tail),
                 onDelete: (id: string) => deleteCallback(id),
                 classes: {
-                    selected: 'selected'
+                    selected: 'selected',
+                    button: 'button',
+                    input: ''
                 }
             }
             const newWrapper = wrapper.setProps(newProps)
@@ -113,7 +117,9 @@ describe('Line Atom editor tests', () => {
                 value: 'Hello'
             },
             classes: {
-                selected: 'selected'
+                selected: 'selected',
+                button: 'button',
+                input: ''
             }
         }
         let wrapper

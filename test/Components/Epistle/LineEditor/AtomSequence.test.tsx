@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { shallow, mount } from 'enzyme'
 
-import AtomSequence, { IAtomSequenceProps, IAtomExchange } from '../../../../src/renderer/Components/Epistle/LineEditor/AtomSequence'
+import AtomSequence, { TPropsWithStyle as IAtomSequenceProps, IAtomExchange } from '../../../../src/renderer/Components/Epistle/LineEditor/AtomSequence'
 import * as LineFixtures from '../Line.fixtures'
 import { calculatePhraseBody } from '../Line.test'
 
@@ -24,7 +24,10 @@ describe('Line editor atom sequence tests', () => {
                 line: LineFixtures.basicLine
             },
             onLineChange: (line: Epistle.IEpistleLine) => changeCallback(line),
-            onAtomSelect: (data: Epistle.ILineAtom[]) => atomSelectCallback(data)
+            onAtomSelect: (data: Epistle.ILineAtom[]) => atomSelectCallback(data),
+            classes: {
+                plusBtn: ''
+            }
         }
         const lineBody: string = calculatePhraseBody(props.line)
 
@@ -62,7 +65,10 @@ describe('Line editor atom sequence tests', () => {
                 line: LineFixtures.basicLine
             },
             onLineChange: (line: Epistle.IEpistleLine) => changeCallback(line),
-            onAtomSelect: (data: Epistle.ILineAtom[]) => atomSelectCallback(data)
+            onAtomSelect: (data: Epistle.ILineAtom[]) => atomSelectCallback(data),
+            classes: {
+                plusBtn: ''
+            }
         }
         const lineBody: string = calculatePhraseBody(props.line)
 
@@ -191,7 +197,10 @@ describe('Line editor atom sequence tests', () => {
                 line: LineFixtures.basicLine
             },
             onLineChange: (line: Epistle.IEpistleLine) => changeCallback(line),
-            onAtomSelect: (data: Epistle.ILineAtom[]) => atomSelectCallback(data)
+            onAtomSelect: (data: Epistle.ILineAtom[]) => atomSelectCallback(data),
+            classes: {
+                plusBtn: ''
+            }
         }
         const lineBody: string = calculatePhraseBody(props.line)
 

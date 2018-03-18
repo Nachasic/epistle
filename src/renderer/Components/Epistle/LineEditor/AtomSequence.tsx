@@ -5,13 +5,23 @@ import LineAtom, { ILineEditorAtomProps as IAtomProps } from './LineAtom'
 import IconButton from 'material-ui/IconButton'
 import AddIcon from 'material-ui-icons/Add'
 
+import { Theme, withStyles, WithStyles } from 'material-ui/styles'
 import * as styles from '../Styles/AtomSequence.css'
 
-export interface IAtomSequenceProps {
+interface IAtomSequenceProps {
     line: Epistle.IEpistleLine,
     onLineChange: (line: Epistle.IEpistleLine) => any,
     onAtomSelect: (selectedAtoms: Epistle.ILineAtom[]) => any,
 }
+
+const style = (theme: Theme) => ({
+    plusBtn: {
+        width: '37px',
+        height: '37px'
+    }
+})
+
+export type TPropsWithStyle = IAtomSequenceProps & WithStyles<'plusBtn'>
 
 // Dedicated interface for exchangind atom data between line editor components
 export interface IAtomExchange {
@@ -26,10 +36,10 @@ export interface IAtomSequenceState {
     selectedAtomIds: string[]
 }
 
-export default class AtomSequence extends React.PureComponent<IAtomSequenceProps, IAtomSequenceState> {
-    public props: IAtomSequenceProps
+export class AtomSequence extends React.PureComponent<TPropsWithStyle, IAtomSequenceState> {
+    public props: TPropsWithStyle
 
-    constructor (props: IAtomSequenceProps) {
+    constructor (props: TPropsWithStyle) {
         super(props)
 
         const state: IAtomSequenceState = {
@@ -252,16 +262,17 @@ export default class AtomSequence extends React.PureComponent<IAtomSequenceProps
         return (
             <div>
                 {this.renderAtoms()}
-                <span className={styles.plusBtn}>
-                    <IconButton
-                        color="primary"
-                        aria-label="Add"
-                        onClick={appendAtom}
-                    >
-                        <AddIcon />
-                    </IconButton>
-                </span>
+                <IconButton
+                    color="primary"
+                    aria-label="Add"
+                    onClick={appendAtom}
+                    className={this.props.classes.plusBtn}
+                >
+                    <AddIcon />
+                </IconButton>
             </div>
         )
     }
 }
+
+export default withStyles(style)<IAtomSequenceProps>(AtomSequence)
