@@ -128,7 +128,7 @@ export class LineAtom extends React.PureComponent<PropsWithStyle, ILineEditorAto
             return this.props.onDelete(this.props.id)
         }
         const inputProperties = {
-            // onBlur: handleUnfocus,
+            onBlur: handleUnfocus,
             // className: styles.inputField,
             onFocus: (event: React.FocusEvent<HTMLInputElement>) => {
                 isFocusing = true
