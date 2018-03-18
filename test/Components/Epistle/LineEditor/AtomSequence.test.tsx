@@ -32,7 +32,7 @@ describe('Line editor atom sequence tests', () => {
         const lineBody: string = calculatePhraseBody(props.line)
 
         beforeEach(() => {
-            wrapper = shallow(<AtomSequence {...props} />)
+            wrapper = mount(<AtomSequence {...props} />)
         })
 
         it('should render atoms for given line', () => {
