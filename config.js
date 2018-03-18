@@ -17,7 +17,7 @@ const config = {
     // Patterns
     OUTPUT_PATTERN_RENDERER: `${OUTPUT_DIR}/renderer/$name.js`,
     OUTPUT_PATTERN_MAIN: `${OUTPUT_DIR}/main/$name.js`,
-    TEST_PATTERN: `**/${TEST_DIR}/**/*.(test|spec).ts(x)`,
+    TEST_PATTERN: `**/${TEST_DIR}/**/*.(test|spec).(tsx|ts)`,
     FILE_PATTERN: `${HOME_DIR}/**/*.ts(x)`,
 
     CSS_OUT: file => `${OUTPUT_DIR}/renderer/${file}`
