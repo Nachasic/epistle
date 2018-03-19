@@ -160,10 +160,26 @@ storiesOf('Epistle line editor components', module)
     }))
 
     .add('Line director', withState<any>({
-        atoms: []
+        atoms: [{
+            type: 'WORD',
+            value: 'Hello'
+        },
+        {
+            type: 'WORD',
+            value: 'World!',
+            articulation: 'LETTER'
+        }]
     }, (store) => {
+        const changeCallback = (atoms: Epistle.ILineAtom[]) => {
+            store.set({ atoms })
+            action('atoms-changed')(atoms)
+        }
+
         return beautifulWrapping(
-            <LineDirector />,
+            <LineDirector
+                atoms={store.state.atoms}
+                onChange={changeCallback}
+            />,
             'Line director',
             <Markdown
                 options={mdOptions}

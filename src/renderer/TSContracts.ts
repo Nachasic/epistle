@@ -28,7 +28,7 @@ export const assert = (expression: boolean, errorMessage: string): void => {
 
 /**
  * Executes assertion after the method is executed providing the result
- * as an argument.
+ * as an argument as well as the original arguments.
  * 
  * Use anonymous function instead of arrow function to access class properties
  * in the assertion.
@@ -39,7 +39,7 @@ export const Postcondition = (assertFn: AssertFn): MethodDecorator => {
 
         const newValue = (...args) => {
             const result = originalValue.apply(this, args)
-            assertFn.call(this, result)
+            assertFn.call(this, result, ...args)
             return result
         }
         descriptor.value = newValue;
