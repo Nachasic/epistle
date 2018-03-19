@@ -119,7 +119,7 @@ export default class LineDirector extends React.PureComponent<ILineDirectorProps
         return (
             <Grid container>
                 <Grid item xs={12} sm={6} >
-                    <FormControl component="fieldset">
+                    <FormControl key="pace" component="fieldset">
                         <FormLabel component="legend">{i18n`Pacing`}</FormLabel>
                         <FormHelperText>{i18n`How fast do you want text to appear?`}</FormHelperText>
                         <RadioGroup
@@ -137,7 +137,7 @@ export default class LineDirector extends React.PureComponent<ILineDirectorProps
                     </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <FormControl component="fieldset">
+                    <FormControl key="articulation" component="fieldset">
                         <FormLabel component="legend">{i18n`Articulation`}</FormLabel>
                         <FormHelperText>{i18n`The articulation in which text appears.`}</FormHelperText>
                         <RadioGroup
