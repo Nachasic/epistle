@@ -11,11 +11,14 @@ export const paceMappings = new Map<Epistle.TLineAtomPace, number> ([
 ])
 
 export interface ILineProps {
-    line: Epistle.IEpistleLine
+    line: Epistle.IEpistleLine,
+    ref?: (line: Line) => any,
+    done?: () => any
 }
 
 interface ILineState {
     queue: Epistle.TLineExecutionQueue | null,
+    pause: boolean,
     queueProgress: number
 }
 
@@ -26,6 +29,7 @@ export default class Line extends React.PureComponent<ILineProps, ILineState> {
         super(props)
         this.state = {
             queue: props.line ? Line.ParseLine(props.line.line) : null,
+            pause: false,
             queueProgress: 0
         }
     }
@@ -94,6 +98,24 @@ export default class Line extends React.PureComponent<ILineProps, ILineState> {
         }, [])
     }
 
+    public TogglePause () {
+        this.setState({
+            pause: !this.state.pause
+        })
+    }
+
+    public Replay () {
+        const schedule = () => this.setState({
+            queueProgress: 0,
+            pause: false
+        })
+
+        if (!this.state.pause) {
+            this.TogglePause()
+        }
+        setTimeout(schedule, 1000)
+    }
+
     componentWillReceiveProps (nextProps) {
         if (nextProps.line) {
             this.setState({
@@ -127,8 +149,15 @@ export default class Line extends React.PureComponent<ILineProps, ILineState> {
             queue: this.state.queue,
             queueProgress: progress + 1
         })
-        if (progress < lineLength - 1) {
+        if (progress < lineLength - 1 && !this.state.pause) {
             setTimeout(update, timeout)
+        } else if (progress === lineLength - 1 && !this.state.pause) {
+            this.setState({
+                pause: true
+            })
+            if (this.props.done) {
+                this.props.done()
+            }
         }
 
         return <p>{this.renderQueue()}</p>

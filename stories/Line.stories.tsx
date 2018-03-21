@@ -1,8 +1,13 @@
 import * as React from 'react'
 import { storiesOf } from '@storybook/react'
+import { action } from '@storybook/addon-actions'
 
 import Grid from 'material-ui/Grid'
 import Paper from 'material-ui/Paper'
+import IconButton from 'material-ui/IconButton'
+import Pause from 'material-ui-icons/Pause'
+import PlayArrow from 'material-ui-icons/PlayArrow'
+import Replay from 'material-ui-icons/Replay'
 import Typography from 'material-ui/Typography'
 import '../src/renderer/Stylesheets/fonts.scss'
 
@@ -52,11 +57,21 @@ storiesOf('Epistle line rendering component', module)
         `
     ))
 
-    .add('Pace direction and pauses', () => beautifulWrapping(
-        <Line line={Fixtures.surprisedLine} />,
-        'Pacing direction and pauses',
-        `
-            Epistle dialogue format allows for control of pacing
-            for the delivery of each line.
-        `
-    ))
+    .add('Pace direction and pauses', () => {
+        let line: Line
+        const done = () => {
+            action('line-complete')()
+        }
+
+        return beautifulWrapping(
+            <div>
+                <Line line={Fixtures.surprisedLine} ref={(thisLine: Line) => line = thisLine} done={done} />
+                <IconButton onClick={() => line.Replay && line.Replay()}><Replay /></IconButton>
+            </div>,
+            'Pacing direction and pauses',
+            `
+                Epistle dialogue format allows for control of pacing
+                for the delivery of each line.
+            `
+        )
+    })

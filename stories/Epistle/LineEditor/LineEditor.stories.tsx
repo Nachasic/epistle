@@ -183,7 +183,7 @@ storiesOf('Epistle line editor components', module)
             'Line director',
             <Markdown
                 options={mdOptions}
-                children={'Some description'}
+                children={Descriptions.lineDirector}
             />
         )
     }))

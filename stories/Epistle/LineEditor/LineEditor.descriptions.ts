@@ -45,15 +45,24 @@ export const atomSequence = `
 
 # User scenarios
 ### 1. Viewing the line
+User should be able to view individual words of the line along with "+" button at the end.
 
 ### 2. Appending atoms
+User should be able to append an empty editable atom by clicking the "+" button.
 
 ### 3. Editing atoms
+User should be able to edit existing atoms by double-clicking them.
 
 ### 4. Deleting atoms
+User should be able to delete the atoms by editing out their contents and then pressing backspace or clicking/focusing outside of them. The very first atom can not be deleted
 
 ### 5. Injecting atoms
+User should be able to inject new atoms in the middle of the line by typing space in exiting atoms whilst editing them.
 
 ### 6. Selecting/deselecting atoms
+User should be able to select/deselect atoms by clicking on them. Edited atoms should remain selected if they were before editing.
+`
+
+export const lineDirector = `
 
 `
