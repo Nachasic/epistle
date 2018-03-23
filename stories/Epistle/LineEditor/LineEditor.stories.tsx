@@ -14,7 +14,7 @@ import * as Descriptions from './LineEditor.descriptions'
 import * as Fixtures from './LineEditor.fixtures'
 
 import LineAtom, { ILineEditorAtomProps as IAtomProps} from '../../../src/renderer/Components/Epistle/LineEditor/LineAtom'
-import AtomSequence from '../../../src/renderer/Components/Epistle/LineEditor/AtomSequence'
+import AtomSequence, { IAtomExchange } from '../../../src/renderer/Components/Epistle/LineEditor/AtomSequence'
 import LineDirector from '../../../src/renderer/Components/Epistle/LineEditor/LineDirector'
 import LineEditor from '../../../src/renderer/Components/Epistle/LineEditor/LineEditor'
 
@@ -159,17 +159,24 @@ storiesOf('Epistle line editor components', module)
     }))
 
     .add('Line director', withState<any>({
-        atoms: [{
-            type: 'WORD',
-            value: 'Hello'
-        },
-        {
-            type: 'WORD',
-            value: 'World!',
-            articulation: 'LETTER'
-        }]
+        atoms: [
+            {
+                id: 'atom1',
+                atom: {
+                    type: 'WORD',
+                    value: 'Hello'
+                }
+            }, {
+                id: 'atom2',
+                atom: {
+                    type: 'WORD',
+                    value: 'World!',
+                    articulation: 'LETTER'
+                }
+            }
+        ]
     }, (store) => {
-        const changeCallback = (atoms: Epistle.ILineAtom[]) => {
+        const changeCallback = (atoms: IAtomExchange[]) => {
             store.set({ atoms })
             action('atoms-changed')(atoms)
         }

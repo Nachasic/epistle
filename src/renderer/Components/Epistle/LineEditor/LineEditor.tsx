@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 import Line from '../Line'
-import AtomSequence from './AtomSequence'
+import AtomSequence, { AtomSequence as CAtomSequence, IAtomExchange } from './AtomSequence'
 import LineDirector from './LineDirector'
 
 import Grid from 'material-ui/Grid'
@@ -25,7 +25,7 @@ export interface ILineEditorProps {
 }
 
 interface ILineEditorState {
-    editingAtoms: Epistle.ILineAtom[],
+    editingAtoms: IAtomExchange[],
     mode: 'ATOMS' | 'LINE' | 'PREVIEW'
 }
 
@@ -45,16 +45,30 @@ export default class LineEditor extends React.PureComponent<ILineEditorProps, IL
         this.props.onChange(line)
     }
 
+    private UpdateAtomSelection (atoms: IAtomExchange[]): void {
+        this.setState({
+            editingAtoms: atoms
+        })
+    }
+
     render () {
+        let linePreview: Line
+        let sequenceEditor: CAtomSequence
+        // let lineDirector: LineDirector
+
+        const atomSelection: IAtomExchange[] = this.state.editingAtoms
+
         const handleLineSequenceChange = (line: Epistle.IEpistleLine) => this.ReportLine(line)
-        const handleAtomSelectionChange = () => null
-        const handleAtomDirectionChange = () => null
+        const handleAtomSelectionChange = (atoms: IAtomExchange[]) => this.UpdateAtomSelection(atoms)
+        const handleAtomDirectionChange = (atoms: IAtomExchange[]) => {
+            sequenceEditor.UpdateLineFromSelection(atoms)
+            setTimeout(sequenceEditor.UpdateSelection.bind(sequenceEditor), 100)
+        }
         const replayBtnHandler = (event: React.MouseEvent<HTMLButtonElement>): boolean => {
             event.preventDefault()
             linePreview.Replay()
             return false
         }
-        let linePreview: Line
 
         return (
             <div>
@@ -71,14 +85,16 @@ export default class LineEditor extends React.PureComponent<ILineEditorProps, IL
                                     line={this.props.line}
                                     onLineChange={handleLineSequenceChange}
                                     onAtomSelect={handleAtomSelectionChange}
+                                    innerRef={(editor: CAtomSequence) => sequenceEditor = editor}
                                 />
                                 <IconButton className={styles.replayBtn} onClick={replayBtnHandler}><Replay /></IconButton>
                             </Grid>
                             <Divider />
                             <Grid item xs={12}>
                                 <LineDirector
-                                    atoms={[]}
+                                    atoms={atomSelection}
                                     onChange={handleAtomDirectionChange}
+                                    // ref={(director: LineDirector) => lineDirector = director}
                                 />
                             </Grid>
                         </Grid>

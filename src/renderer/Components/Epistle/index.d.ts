@@ -8,6 +8,7 @@ declare namespace Epistle {
     export interface ILineAtom {
         type: TLineAtomType,
         value: string,
+        id?: string,
         pace?: TLineAtomPace,
         articulation?: TLineAtomArticulation,
         effect?: TLineAtomEffect

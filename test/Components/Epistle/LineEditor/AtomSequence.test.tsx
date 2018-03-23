@@ -24,7 +24,7 @@ describe('Line editor atom sequence tests', () => {
                 line: LineFixtures.basicLine
             },
             onLineChange: (line: Epistle.IEpistleLine) => changeCallback(line),
-            onAtomSelect: (data: Epistle.ILineAtom[]) => atomSelectCallback(data),
+            onAtomSelect: (data: IAtomExchange[]) => atomSelectCallback(data),
             classes: {
                 plusBtn: ''
             }
@@ -65,7 +65,7 @@ describe('Line editor atom sequence tests', () => {
                 line: LineFixtures.basicLine
             },
             onLineChange: (line: Epistle.IEpistleLine) => changeCallback(line),
-            onAtomSelect: (data: Epistle.ILineAtom[]) => atomSelectCallback(data),
+            onAtomSelect: (data: IAtomExchange[]) => atomSelectCallback(data),
             classes: {
                 plusBtn: ''
             }
@@ -197,7 +197,7 @@ describe('Line editor atom sequence tests', () => {
                 line: LineFixtures.basicLine
             },
             onLineChange: (line: Epistle.IEpistleLine) => changeCallback(line),
-            onAtomSelect: (data: Epistle.ILineAtom[]) => atomSelectCallback(data),
+            onAtomSelect: (data: IAtomExchange[]) => atomSelectCallback(data),
             classes: {
                 plusBtn: ''
             }

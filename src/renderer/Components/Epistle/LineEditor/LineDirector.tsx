@@ -10,6 +10,8 @@ import Radio, { RadioGroup } from 'material-ui/Radio'
 import { FormLabel, FormControl, FormControlLabel, FormHelperText } from 'material-ui/Form'
 import Grid from 'material-ui/Grid'
 
+import { IAtomExchange } from './AtomSequence'
+
 import * as styles from '../Styles/LineDirector.css'
 
 // Errors
@@ -22,8 +24,9 @@ interface ILineDirectorReducedProps {
 }
 
 interface ILineDirectorProps {
-    atoms: Epistle.ILineAtom[],
-    onChange: (atoms: Epistle.ILineAtom[]) => any
+    atoms: IAtomExchange[],
+    onChange: (atoms: IAtomExchange[]) => any,
+    ref?: (director: LineDirector) => any
 }
 
 interface ILineDirectorState {
@@ -32,7 +35,7 @@ interface ILineDirectorState {
 }
 
 @i18nGroup(Scopes.LINE_EDITOR)
-export default class LineDirector extends React.PureComponent<ILineDirectorProps, ILineDirectorState> {
+export default class LineDirector extends React.Component<ILineDirectorProps, ILineDirectorState> {
     public props: ILineDirectorProps
 
     constructor (props: ILineDirectorProps) {
@@ -44,8 +47,14 @@ export default class LineDirector extends React.PureComponent<ILineDirectorProps
         }
     }
 
-    @Precondition((atoms: Epistle.ILineAtom[]) => assert(atoms.length >= 0, ERR_REDUCED_ATOM_PRODUCTION))
-    private parseAtoms (atoms: Epistle.ILineAtom[]): ILineDirectorReducedProps {
+    @Precondition((exchanges: IAtomExchange[]) => assert(exchanges.length >= 0, ERR_REDUCED_ATOM_PRODUCTION))
+    private parseAtoms (exchanges: IAtomExchange[]): ILineDirectorReducedProps {
+        const atoms: Epistle.ILineAtom[] = exchanges.reduce((accumulator: Epistle.ILineAtom[], value: IAtomExchange): Epistle.ILineAtom[] => {
+            if (value.atom) {
+                return [...accumulator, value.atom]
+            }
+            return accumulator
+        }, [])
         const reducedProps: ILineDirectorReducedProps = {
             pace: atoms[0].pace || 'NORMAL',
             articulation: atoms[0].articulation || 'PAIR'
@@ -62,24 +71,31 @@ export default class LineDirector extends React.PureComponent<ILineDirectorProps
         }, reducedProps)
     }
 
-    private reportAtoms (reducedProps: ILineDirectorReducedProps): Epistle.ILineAtom[] {
-        const atoms: Epistle.ILineAtom[] = this.props.atoms
+    private reportAtoms (reducedProps: ILineDirectorReducedProps): IAtomExchange[] {
+        const atoms: IAtomExchange[] = this.props.atoms
 
-        return atoms.map((atom: Epistle.ILineAtom): Epistle.ILineAtom => {
+        return atoms.map((exchange: IAtomExchange): IAtomExchange => {
             const reportAtom: Epistle.ILineAtom = {
-                type: atom.type,
-                value: atom.value,
-                pace: reducedProps.pace === 'MULTIPLE' ? atom.pace : reducedProps.pace,
-                articulation: reducedProps.articulation === 'MULTIPLE' ? atom.articulation : reducedProps.articulation
+                type: exchange.atom.type,
+                value: exchange.atom.value,
+                pace: reducedProps.pace === 'MULTIPLE' ? exchange.atom.pace : reducedProps.pace,
+                articulation: reducedProps.articulation === 'MULTIPLE' ? exchange.atom.articulation : reducedProps.articulation
             }
 
-            return reportAtom
+            return {
+                id: exchange.id,
+                atom: reportAtom
+            }
         })
     }
 
     componentDidMount () {
         const { atoms } = this.props
         const reducedAtom: ILineDirectorReducedProps = atoms.length ? this.parseAtoms(atoms) : {}
+
+        if (this.props.ref) {
+            this.props.ref(this)
+        }
 
         this.setState({
             reducedAtom,
@@ -100,7 +116,7 @@ export default class LineDirector extends React.PureComponent<ILineDirectorProps
     render () {
         const { pace, articulation } = this.state.reducedAtom
         const setPace = (event, value: Epistle.TLineAtomPace) => {
-            const newAtoms: Epistle.ILineAtom[] = this.reportAtoms({
+            const newAtoms: IAtomExchange[] = this.reportAtoms({
                 pace: value,
                 articulation
             })
@@ -108,7 +124,7 @@ export default class LineDirector extends React.PureComponent<ILineDirectorProps
             this.props.onChange(newAtoms)
         }
         const setArticulation = (event, value: Epistle.TLineAtomArticulation) => {
-            const newAtoms: Epistle.ILineAtom[] = this.reportAtoms({
+            const newAtoms: IAtomExchange[] = this.reportAtoms({
                 pace,
                 articulation: value
             })

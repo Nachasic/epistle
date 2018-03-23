@@ -148,7 +148,7 @@ export default class Line extends React.PureComponent<ILineProps, ILineState> {
     componentWillReceiveProps (nextProps) {
         if (nextProps.line) {
             this.setState({
-                queue: Line.ParseLine(nextProps.line.line),
+                queue: Line.ParseLine(nextProps.line.line)
             })
 
             this.Replay()

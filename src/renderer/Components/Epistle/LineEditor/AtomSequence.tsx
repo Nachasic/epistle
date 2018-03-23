@@ -12,7 +12,8 @@ interface IAtomSequenceProps {
     line: Epistle.IEpistleLine,
     className?: string,
     onLineChange: (line: Epistle.IEpistleLine) => any,
-    onAtomSelect: (selectedAtoms: Epistle.ILineAtom[]) => any,
+    onAtomSelect: (selectedAtoms: IAtomExchange[]) => any,
+    ref?: (component: AtomSequence) => any
 }
 
 const style = (theme: Theme) => ({
@@ -141,13 +142,19 @@ export class AtomSequence extends React.PureComponent<TPropsWithStyle, IAtomSequ
 
     private reportSelectedAtoms (ids: string[]): void {
         if (this.props.onAtomSelect) {
-            const atoms: Epistle.ILineAtom[] = this.state.parsedAtoms.reduce((accumulator: Epistle.ILineAtom[], value: IAtomExchange): Epistle.ILineAtom[] => {
+            // const atoms: Epistle.ILineAtom[] = this.state.parsedAtoms.reduce((accumulator: Epistle.ILineAtom[], value: IAtomExchange): Epistle.ILineAtom[] => {
+            //     if (ids.indexOf(value.id) >= 0 && value.atom.value) {
+            //         return [...accumulator, value.atom]
+            //     }
+            //     return accumulator
+            // }, [])
+            const atoms: IAtomExchange[] = this.state.parsedAtoms.reduce((accumulator: IAtomExchange[], value: IAtomExchange): IAtomExchange[] => {
                 if (ids.indexOf(value.id) >= 0 && value.atom.value) {
-                    return [...accumulator, value.atom]
+                    return [...accumulator, value]
                 }
+
                 return accumulator
             }, [])
-
             this.props.onAtomSelect(atoms)
         }
     }
@@ -223,10 +230,28 @@ export class AtomSequence extends React.PureComponent<TPropsWithStyle, IAtomSequ
         })
     }
 
+    public UpdateLineFromSelection (atoms: IAtomExchange[]): void {
+        const currentAtoms = this.state.parsedAtoms
+        const updatedAtoms = currentAtoms.map((exchange: IAtomExchange): IAtomExchange => {
+            const updatedExchange: IAtomExchange = atoms.find((value: IAtomExchange) => value.id === exchange.id)
+
+            return updatedExchange ? updatedExchange : exchange
+        })
+
+        return this.updateLineByAtomExchangeList(updatedAtoms)
+    }
+
+    public UpdateSelection (): void {
+        const selectedIds: string[] = this.state.selectedAtomIds
+
+        this.reportSelectedAtoms(selectedIds)
+    }
+
     componentDidUpdate () {
         const indexToEdit: number = this.state.scheduledAtomUpdateIndex
         const atomExchangeList: IAtomExchange[] = this.state.parsedAtoms
         const state: IAtomSequenceState = { ...this.state }
+        const selection: string[] = this.state.selectedAtomIds
 
         if (indexToEdit !== null) {
             state.scheduledAtomUpdateIndex = null
@@ -247,6 +272,12 @@ export class AtomSequence extends React.PureComponent<TPropsWithStyle, IAtomSequ
     componentWillMount () {
         if (this.props.line.line.length) {
             this.setState({ parsedAtoms: this.parseAtoms(this.props.line.line) })
+        }
+    }
+
+    componentDidMount () {
+        if (this.props.ref) {
+            this.props.ref(this)
         }
     }
 
