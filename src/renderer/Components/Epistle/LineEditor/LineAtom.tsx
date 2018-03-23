@@ -8,7 +8,8 @@ import ButtonBase from 'material-ui/ButtonBase'
 import Modal from 'material-ui/Modal'
 
 import { Theme, withStyles, WithStyles } from 'material-ui/styles'
-import Line from '../Line';
+import i18n, { i18nGroup } from 'es2015-i18n-tag'
+import Scopes from '../../../i18n/Scopes'
 
 // When input field is focusing, we set a timeout to halt any
 // value changes — so when deleting a forwardstanding atom
@@ -60,6 +61,7 @@ const defaultAtom: Epistle.ILineAtom = {
     value: ''
 }
 
+@i18nGroup(Scopes.LINE_EDITOR)
 export class LineAtom extends React.PureComponent<PropsWithStyle, ILineEditorAtomState> {
     public props: PropsWithStyle
 
@@ -84,11 +86,15 @@ export class LineAtom extends React.PureComponent<PropsWithStyle, ILineEditorAto
                 this.props.onClick(this.props.id)
             }
         }, DOUBLE_CLICK_DEBOUNCE_TIME)
+        const nativeButtonProps = {
+            label: i18n`Click to select; double click to edit`
+        }
         return (
             <ButtonBase
                 className={this.props.selected ? `${this.props.classes.button} ${this.props.classes.selected}` : this.props.classes.button}
                 onDoubleClick={handleDoubleClick}
                 onClick={handleClick}
+                {...nativeButtonProps}
             >
                 {atom.value}
             </ButtonBase>

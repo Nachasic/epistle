@@ -140,6 +140,7 @@ export default class LineDirector extends React.Component<ILineDirectorProps, IL
                         <FormHelperText>{i18n`How fast do you want text to appear?`}</FormHelperText>
                         <RadioGroup
                             aria-label={i18n`Pacing`}
+                            className={!this.state.enabled ? styles.disabled : ''}
                             name="pacing"
                             value={pace}
                             onChange={setPace}
@@ -158,6 +159,7 @@ export default class LineDirector extends React.Component<ILineDirectorProps, IL
                         <FormHelperText>{i18n`The articulation in which text appears.`}</FormHelperText>
                         <RadioGroup
                             aria-label={i18n`Articulation`}
+                            className={!this.state.enabled ? styles.disabled : ''}
                             name="articulation"
                             value={articulation}
                             onChange={setArticulation}

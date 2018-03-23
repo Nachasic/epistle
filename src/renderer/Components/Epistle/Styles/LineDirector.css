@@ -3,6 +3,10 @@
     height: 36px !important;
 }
 
+:local(.disabled) {
+    opacity: .5;
+}
+
 :local(.option) {
     /* transform: scale(0.95) */
 }
