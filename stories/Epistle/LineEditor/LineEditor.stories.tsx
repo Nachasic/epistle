@@ -16,6 +16,7 @@ import * as Fixtures from './LineEditor.fixtures'
 import LineAtom, { ILineEditorAtomProps as IAtomProps} from '../../../src/renderer/Components/Epistle/LineEditor/LineAtom'
 import AtomSequence from '../../../src/renderer/Components/Epistle/LineEditor/AtomSequence'
 import LineDirector from '../../../src/renderer/Components/Epistle/LineEditor/LineDirector'
+import LineEditor from '../../../src/renderer/Components/Epistle/LineEditor/LineEditor'
 
 const styles = {
     root: {
@@ -28,9 +29,7 @@ const styles = {
     demo: {
         padding: '16px',
         textAlign: 'center',
-        backgroundColor: '#eee',
-        fontSize: '1.5em',
-        fontFamily: 'monospace'
+        backgroundColor: '#eee'
     }
 }
 
@@ -184,6 +183,20 @@ storiesOf('Epistle line editor components', module)
             <Markdown
                 options={mdOptions}
                 children={Descriptions.lineDirector}
+            />
+        )
+    }))
+
+    .add('Line editor', withState<any>({
+        line: Fixtures.sampleLine1
+    }, (store) => {
+        const handleLineChange = (line: Epistle.IEpistleLine) => store.set({ line })
+        return beautifulWrapping(
+            <LineEditor onChange={handleLineChange} line={store.state.line} />,
+            'Line editor',
+            <Markdown
+                options={mdOptions}
+                children="Some description"
             />
         )
     }))

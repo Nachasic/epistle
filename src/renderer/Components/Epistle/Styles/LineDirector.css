@@ -2,3 +2,7 @@
     width: 36px !important;
     height: 36px !important;
 }
+
+:local(.option) {
+    transform: scale(0.9)
+}

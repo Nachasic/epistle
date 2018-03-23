@@ -10,6 +10,7 @@ import * as styles from '../Styles/AtomSequence.css'
 
 interface IAtomSequenceProps {
     line: Epistle.IEpistleLine,
+    className?: string,
     onLineChange: (line: Epistle.IEpistleLine) => any,
     onAtomSelect: (selectedAtoms: Epistle.ILineAtom[]) => any,
 }
@@ -260,7 +261,7 @@ export class AtomSequence extends React.PureComponent<TPropsWithStyle, IAtomSequ
         }
 
         return (
-            <div>
+            <div className={this.props.className}>
                 {this.renderAtoms()}
                 <IconButton
                     color="primary"

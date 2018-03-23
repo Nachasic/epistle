@@ -23,6 +23,7 @@ interface ILineState {
 }
 
 export default class Line extends React.PureComponent<ILineProps, ILineState> {
+    private tick
     public props: ILineProps
 
     constructor (props: ILineProps) {
@@ -34,6 +35,31 @@ export default class Line extends React.PureComponent<ILineProps, ILineState> {
         }
     }
 
+    private MakeTick (): void {
+        const { queueProgress, pause, queue } = this.state
+        let timeout: number
+        const lineLength = queue.length
+
+        clearTimeout(this.tick)
+
+        if (queueProgress < lineLength - 1 && !pause) {
+            timeout = queue[queueProgress + 1].timeout
+            this.setState({
+                queueProgress: queueProgress + 1
+            })
+
+            this.tick = setTimeout(this.MakeTick.bind(this), timeout)
+        } else if (queueProgress === lineLength - 1 && !pause) {
+            this.setState({
+                pause: true
+            })
+
+            if (this.props.done) {
+                this.props.done()
+            }
+        }
+    }
+
     /**
      * Converts a series of line atoms into execution queue.
      * 
@@ -42,6 +68,10 @@ export default class Line extends React.PureComponent<ILineProps, ILineState> {
      */
     public static ParseLine (atoms: Epistle.ILineAtom[]): Epistle.TLineExecutionQueue {
         const breakWord = (word: string, mode: Epistle.TLineAtomArticulation = 'PAIR'): string[] => {
+            if (!word.length) {
+                return []
+            }
+
             if (word.length === 1) {
                 return [word]
             }
@@ -99,30 +129,34 @@ export default class Line extends React.PureComponent<ILineProps, ILineState> {
     }
 
     public TogglePause () {
+        clearTimeout(this.tick)
+
         this.setState({
             pause: !this.state.pause
         })
     }
 
     public Replay () {
-        const schedule = () => this.setState({
+        this.setState({
             queueProgress: 0,
             pause: false
         })
-
-        if (!this.state.pause) {
-            this.TogglePause()
-        }
-        setTimeout(schedule, 1000)
+        clearTimeout(this.tick)
+        this.tick = setTimeout(this.MakeTick.bind(this), 100)
     }
 
     componentWillReceiveProps (nextProps) {
         if (nextProps.line) {
             this.setState({
                 queue: Line.ParseLine(nextProps.line.line),
-                queueProgress: 0
             })
+
+            this.Replay()
         }
+    }
+
+    componentDidMount () {
+        this.Replay()
     }
 
     renderQueue () {
@@ -142,24 +176,6 @@ export default class Line extends React.PureComponent<ILineProps, ILineState> {
     }
 
     render () {
-        const progress = this.state.queueProgress
-        const timeout = this.state.queue[progress].timeout
-        const lineLength = this.state.queue.length
-        const update = () => this.setState({
-            queue: this.state.queue,
-            queueProgress: progress + 1
-        })
-        if (progress < lineLength - 1 && !this.state.pause) {
-            setTimeout(update, timeout)
-        } else if (progress === lineLength - 1 && !this.state.pause) {
-            this.setState({
-                pause: true
-            })
-            if (this.props.done) {
-                this.props.done()
-            }
-        }
-
-        return <p>{this.renderQueue()}</p>
+        return <p className={styles.line}>{this.renderQueue()}</p>
     }
 }

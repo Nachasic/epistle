@@ -1,0 +1,12 @@
+:local(.sequenceEditor) {
+    display: flex
+}
+
+:local(.sequence) {
+    /* flex-grow: 1 */
+}
+
+:local(.replayBtn) {
+    width: 36px !important;
+    height: 36px !important;
+}

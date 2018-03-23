@@ -16,3 +16,7 @@
 :local(.VISIBLE) {
     opacity: 1
 }
+
+:local(.line) {
+    margin: 0
+}

@@ -128,11 +128,11 @@ export default class LineDirector extends React.PureComponent<ILineDirectorProps
                             value={pace}
                             onChange={setPace}
                         >
-                            <FormControlLabel disabled={!this.state.enabled} value="X-FAST" control={<Radio className={styles.radio} />} label={i18n`Extra fast`} />
-                            <FormControlLabel disabled={!this.state.enabled} value="FAST" control={<Radio className={styles.radio} />} label={i18n`Fast`} />
-                            <FormControlLabel disabled={!this.state.enabled} value="NORMAL" control={<Radio className={styles.radio} />} label={i18n`Normal`} />
-                            <FormControlLabel disabled={!this.state.enabled} value="SLOW" control={<Radio className={styles.radio} />} label={i18n`Slow`} />
-                            <FormControlLabel disabled={!this.state.enabled} value="X-SLOW" control={<Radio className={styles.radio} />} label={i18n`Extra Slow`} />
+                            <FormControlLabel className={styles.option} disabled={!this.state.enabled} value="X-FAST" control={<Radio className={styles.radio} />} label={i18n`Extra fast`} />
+                            <FormControlLabel className={styles.option} disabled={!this.state.enabled} value="FAST" control={<Radio className={styles.radio} />} label={i18n`Fast`} />
+                            <FormControlLabel className={styles.option} disabled={!this.state.enabled} value="NORMAL" control={<Radio className={styles.radio} />} label={i18n`Normal`} />
+                            <FormControlLabel className={styles.option} disabled={!this.state.enabled} value="SLOW" control={<Radio className={styles.radio} />} label={i18n`Slow`} />
+                            <FormControlLabel className={styles.option} disabled={!this.state.enabled} value="X-SLOW" control={<Radio className={styles.radio} />} label={i18n`Extra Slow`} />
                         </RadioGroup>
                     </FormControl>
                 </Grid>
@@ -146,9 +146,9 @@ export default class LineDirector extends React.PureComponent<ILineDirectorProps
                             value={articulation}
                             onChange={setArticulation}
                         >
-                            <FormControlLabel disabled={!this.state.enabled} value="LETTER" control={<Radio className={styles.radio} />} label={i18n`Letter-by-letter`} />
-                            <FormControlLabel disabled={!this.state.enabled} value="PAIR" control={<Radio className={styles.radio} />} label={i18n`By pairs of letters`} />
-                            <FormControlLabel disabled={!this.state.enabled} value="WORD" control={<Radio className={styles.radio} />} label={i18n`By whole word`} />
+                            <FormControlLabel className={styles.option} disabled={!this.state.enabled} value="LETTER" control={<Radio className={styles.radio} />} label={i18n`Letter-by-letter`} />
+                            <FormControlLabel className={styles.option} disabled={!this.state.enabled} value="PAIR" control={<Radio className={styles.radio} />} label={i18n`By pairs of letters`} />
+                            <FormControlLabel className={styles.option} disabled={!this.state.enabled} value="WORD" control={<Radio className={styles.radio} />} label={i18n`By whole word`} />
                         </RadioGroup>
                     </FormControl>
                 </Grid>
