@@ -84,7 +84,7 @@ describe('<Line> component tests', () => {
                 const { queue, queueProgress } = wrapper.state()
 
                 expect(queueProgress + 1).toEqual(queue.length)
-                expect(setTimeout).toHaveBeenCalledTimes(queueProgress - 1)
+                expect(setTimeout).toHaveBeenCalledTimes(queueProgress)
             }
 
             jest.runAllTimers() // We gotta go back to the FUTURE
