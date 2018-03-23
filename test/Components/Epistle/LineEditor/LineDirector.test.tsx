@@ -2,21 +2,27 @@ import * as React from 'react'
 import { shallow, mount } from 'enzyme'
 
 import LineDirector from '../../../../src/renderer/Components/Epistle/LineEditor/LineDirector'
+import { IAtomExchange } from '../../../../src/renderer/Components/Epistle/LineEditor/AtomSequence'
 
 import Radio, { RadioGroup } from 'material-ui/Radio'
 import { FormLabel, FormControl, FormControlLabel, FormHelperText } from 'material-ui/Form'
 
 describe('<LineDirector> tests', () => {
     const changeCallback: jest.Mock<any> = jest.fn()
-    const atoms: Epistle.ILineAtom[] = [
+    const atoms: IAtomExchange[] = [
         {
-            type: 'WORD',
-            value: 'Hello'
-        },
-        {
-            type: 'WORD',
-            value: 'Hello',
-            pace: 'SLOW'
+            id: 'atom1',
+            atom: {
+                type: 'WORD',
+                value: 'Hello'
+            }
+        }, {
+            id: 'atom2',
+            atom: {
+                type: 'WORD',
+                value: 'Hello',
+                pace: 'SLOW'
+            }
         }
     ]
 

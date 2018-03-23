@@ -215,12 +215,14 @@ describe('Line editor atom sequence tests', () => {
         })
 
         it('should select atoms on click and report selection', () => {
-            const expectedReport: Epistle.ILineAtom[] = [props.line.line[0]]
+            const expectedReport: Epistle.ILineAtom = props.line.line[0]
+            const numberOfCalls = atomSelectCallback.mock.calls.length
 
             firstAtom.simulate('click')
             jest.runAllTimers()
 
-            expect(atomSelectCallback).toHaveBeenCalledWith(expectedReport)
+            const gotReport = atomSelectCallback.mock.calls[0][0][0].atom
+            expect(gotReport).toEqual(expectedReport)
         })
 
         it('should deselect selected atoms and report new selection', () => {
