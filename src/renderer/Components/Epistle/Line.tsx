@@ -90,9 +90,10 @@ export default class Line extends React.PureComponent<ILineProps, ILineState> {
 
         return atoms.reduce((accumulator: Epistle.TLineExecutionQueue, atom: Epistle.ILineAtom, index: number) => {
             let bodies: Epistle.TLineExecutionQueue = []
+            const pace: Epistle.TLineAtomPace = atom.pace || 'NORMAL'
             const spaceOperation: Epistle.ILineExecutionOperation = {
                 key: shortid.generate() as string,
-                timeout: paceMappings.get(atom.pace),
+                timeout: paceMappings.get(pace),
                 effect: 'NONE',
                 body: ' '
             }
@@ -102,7 +103,7 @@ export default class Line extends React.PureComponent<ILineProps, ILineState> {
                     .map((value) => {
                         const operation: Epistle.ILineExecutionOperation = {
                             key: shortid.generate() as string,
-                            timeout: paceMappings.get(atom.pace),
+                            timeout: paceMappings.get(pace),
                             effect: atom.effect || 'NONE',
                             body: value
                         }
