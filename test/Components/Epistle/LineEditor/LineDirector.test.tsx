@@ -1,5 +1,6 @@
 import * as React from 'react'
-import { shallow, mount } from 'enzyme'
+import { shallow } from 'enzyme'
+import { createMount } from 'material-ui/test-utils'
 
 import LineDirector from '../../../../src/renderer/Components/Epistle/LineEditor/LineDirector'
 import { IAtomExchange } from '../../../../src/renderer/Components/Epistle/LineEditor/AtomSequence'
@@ -31,7 +32,13 @@ describe('<LineDirector> tests', () => {
     })
 
     describe('Controls rendering', () => {
-        const wrapper = mount(<LineDirector atoms={[]} onChange={changeCallback} />)
+        let mount
+        let wrapper
+
+        beforeAll(() => {
+            mount = createMount()
+            wrapper = mount(<LineDirector atoms={[]} onChange={changeCallback} />)
+        })
 
         it('should render pace controls', () => {
             const controls = wrapper.find(FormControl)
@@ -66,5 +73,46 @@ describe('<LineDirector> tests', () => {
                 expect(option.props().disabled).toBeFalsy()
             })
         })
+    })
+
+    describe('Controls functionality', () => {
+        let mount
+        let wrapper
+        let controls
+
+        beforeAll(() => {
+            mount = createMount()
+            wrapper = mount(<LineDirector atoms={atoms} onChange={changeCallback} />)
+            controls = wrapper.find(FormControl)
+        })
+
+        it('should render enabled controls with selected value if pacing or articulation is consistent in the selection', () => {
+            const articulationControls = controls.at(1).find(RadioGroup)
+            const articulationValue = articulationControls.props().value
+
+            expect(articulationValue).toEqual('PAIR')
+        })
+
+        it('should render empty enabled controls if pacing or articulation is inconsistent in the selection', () => {
+            const paceControls = controls.at(0).find(RadioGroup)
+            const paceValue = paceControls.props().value
+
+            expect(paceValue).toEqual('MULTIPLE')
+        })
+
+        // it('should report changes with whole exchange list once the pacing is set', () => {
+        //     const paceControls = controls.at(0).find(RadioGroup)
+        //     const extraFastPacingOption = paceControls.find(FormControlLabel).at(0).childAt(0)
+        //     const expectedExchangeReport = atoms.map((exchange: IAtomExchange): IAtomExchange => ({
+        //         ...exchange,
+        //         atom: {
+        //             ...exchange.atom,
+        //             pace: 'X-FAST'
+        //         }
+        //     }))
+
+        //     extraFastPacingOption.simulate('click')
+        //     expect(changeCallback).toHaveBeenLastCalledWith(expectedExchangeReport)
+        // })
     })
 })

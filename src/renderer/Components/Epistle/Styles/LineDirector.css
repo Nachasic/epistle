@@ -8,5 +8,6 @@
 }
 
 :local(.option) {
-    /* transform: scale(0.95) */
+    /* optional styles - keep 'em just in case */
+    box-sizing: border-box
 }
