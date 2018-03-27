@@ -88,7 +88,7 @@ const beautifulWrapping = (element, header, annotation) =>
         </Grid>
     </div>
 
-storiesOf('Epistle line editor components', module)
+storiesOf('Line editor components', module)
     .add('Line atom', withState<any>({
         selected: false,
         editmode: false,

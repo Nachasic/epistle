@@ -48,7 +48,7 @@ const beautifulWrapping = (element, header, annotation) =>
         </Grid>
     </div>
 
-storiesOf('Epistle line rendering component', module)
+storiesOf('Line rendering component', module)
     .add('Hello World', () => beautifulWrapping(
         <Line line={Fixtures.testLine} />,
         'Basic case',

@@ -25,8 +25,7 @@ export interface ILineEditorProps {
 }
 
 interface ILineEditorState {
-    editingAtoms: IAtomExchange[],
-    mode: 'ATOMS' | 'LINE' | 'PREVIEW'
+    editingAtoms: IAtomExchange[]
 }
 
 export default class LineEditor extends React.PureComponent<ILineEditorProps, ILineEditorState> {
@@ -36,8 +35,7 @@ export default class LineEditor extends React.PureComponent<ILineEditorProps, IL
         super(props)
 
         this.state = {
-            editingAtoms: [],
-            mode: 'LINE'
+            editingAtoms: []
         }
     }
 
@@ -54,7 +52,6 @@ export default class LineEditor extends React.PureComponent<ILineEditorProps, IL
     render () {
         let linePreview: Line
         let sequenceEditor: CAtomSequence
-        // let lineDirector: LineDirector
 
         const atomSelection: IAtomExchange[] = this.state.editingAtoms
 
@@ -94,7 +91,6 @@ export default class LineEditor extends React.PureComponent<ILineEditorProps, IL
                                 <LineDirector
                                     atoms={atomSelection}
                                     onChange={handleAtomDirectionChange}
-                                    // ref={(director: LineDirector) => lineDirector = director}
                                 />
                             </Grid>
                         </Grid>
